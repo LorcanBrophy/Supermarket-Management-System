@@ -4,14 +4,14 @@ public class Product {
 
     // fields
     private String name;
-    private double price;
+    private float price;
     private float weight;
     private int quantity;
     private String temperature; // "room", "fridge", "freezer"
     private String photoURL;
 
     // constructor
-    public Product(String name, double price, float weight, int quantity, String temperature, String photoURL) {
+    public Product(String name, float price, float weight, int quantity, String temperature, String photoURL) {
         this.name = name;
         this.price = price;
         this.weight = weight;
@@ -20,13 +20,12 @@ public class Product {
         this.photoURL = photoURL;
     }
 
-
     // getters and setters
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
+    public float getPrice() { return price; }
+    public void setPrice(float price) { this.price = price; }
 
     public float getWeight() { return weight; }
     public void setWeight(float weight) { this.weight = weight; }
@@ -44,16 +43,7 @@ public class Product {
     public void updateQuantity(int amount) {
         this.quantity += amount;
     }
-
-    public void updatePrice(double newPrice) {
-        this.price = newPrice;
-    }
-
-    public void updatePhoto(String newPhotoURL) {
-        this.photoURL = newPhotoURL;
-    }
-
-    public double getTotalValue() {
+    public float totalValue() {
         return price * quantity;
     }
 
