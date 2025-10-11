@@ -1,0 +1,72 @@
+package com.example.dsa_ca1.models;
+
+public class Product {
+
+    // fields
+    private String name;
+    private double price;
+    private float weight;
+    private int quantity;
+    private String temperature; // "room", "fridge", "freezer"
+    private String photoURL;
+
+    // constructor
+    public Product(String name, double price, float weight, int quantity, String temperature, String photoURL) {
+        this.name = name;
+        this.price = price;
+        this.weight = weight;
+        this.quantity = quantity;
+        this.temperature = temperature;
+        this.photoURL = photoURL;
+    }
+
+
+    // getters and setters
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+
+    public float getWeight() { return weight; }
+    public void setWeight(float weight) { this.weight = weight; }
+
+    public int getQuantity() { return quantity; }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+
+    public String getTemperature() { return temperature; }
+    public void setTemperature(String temperature) { this.temperature = temperature; }
+
+    public String getPhotoURL() { return photoURL; }
+    public void setPhotoURL(String photoURL) { this.photoURL = photoURL; }
+
+    // helper methods
+    public void updateQuantity(int amount) {
+        this.quantity += amount;
+    }
+
+    public void updatePrice(double newPrice) {
+        this.price = newPrice;
+    }
+
+    public void updatePhoto(String newPhotoURL) {
+        this.photoURL = newPhotoURL;
+    }
+
+    public double getTotalValue() {
+        return price * quantity;
+    }
+
+    // toString
+    @Override
+    public String toString() {
+        return "Product{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", weight=" + weight +
+                ", quantity=" + quantity +
+                ", temperature='" + temperature + '\'' +
+                ", photoURL='" + photoURL + '\'' +
+                '}';
+    }
+}
