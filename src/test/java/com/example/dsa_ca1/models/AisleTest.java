@@ -8,7 +8,6 @@ class AisleTest {
 
     private Aisle aisle;
     private Shelf shelf1, shelf2;
-    private Product p1, p2, p3;
 
     @BeforeEach
     void setup() {
@@ -17,9 +16,9 @@ class AisleTest {
         shelf1 = new Shelf(1);
         shelf2 = new Shelf(2);
 
-        p1 = new Product("Cornflakes", 4.0f, 720f, 7, "room", "a.png");
-        p2 = new Product("Weetabix", 4.5f, 720f, 16, "room", "b.png");
-        p3 = new Product("Porridge", 3f, 950f, 16, "room", "c.png");
+        Product p1 = new Product("Cornflakes", 4.0f, 720f, 7, "room", "a.png");
+        Product p2 = new Product("Weetabix", 4.5f, 720f, 16, "room", "b.png");
+        Product p3 = new Product("Porridge", 3f, 950f, 16, "room", "c.png");
 
         shelf1.addProduct(p1);
         shelf2.addProduct(p2);
@@ -27,10 +26,28 @@ class AisleTest {
     }
     @Test
     void testAddShelf() {
+        assertEquals(0, aisle.getShelves().size());
+
+        aisle.addShelf(shelf1);
+        assertEquals(1, aisle.getShelves().size());
+
+        aisle.addShelf(shelf2);
+        assertEquals(2, aisle.getShelves().size());
+
+        assertEquals(shelf1.toString() + "\n" + shelf2.toString() + "\n", aisle.getShelves().display());
+    }
+
+    @Test
+    void testRemoveShelf() {
         aisle.addShelf(shelf1);
         aisle.addShelf(shelf2);
+        assertEquals(shelf1.toString() + "\n" + shelf2.toString() + "\n", aisle.getShelves().display());
 
-        assertEquals(shelf1.toString() + "\n" + shelf2.toString() + "\n" + "\n", aisle.getShelves().display());
+        aisle.removeShelf(shelf2);
+        assertEquals(shelf1.toString() + "\n", aisle.getShelves().display());
+
+        aisle.removeShelf(shelf1);
+        assertEquals("", aisle.getShelves().display());
     }
 
 }

@@ -1,25 +1,18 @@
 package com.example.dsa_ca1.models;
 
 public class Aisle {
-    CustomLinkedList<Shelf> shelves = new CustomLinkedList<>();
+    private String aisleName = ""; // must be unique
+    private float aisleWidth;
+    private float aisleHeight;
+    private String aisleTemperature = "";
 
-    String aisleName = ""; // must be unique
-    float aisleWidth;
-    float aisleHeight;
-    String aisleTemperature = "";
+    private CustomLinkedList<Shelf> shelves = new CustomLinkedList<>();
 
     public Aisle(String aisleName, float aisleWidth, float aisleHeight, String aisleTemperature) {
         this.aisleName = aisleName;
         this.aisleWidth = aisleWidth;
         this.aisleHeight = aisleHeight;
         this.aisleTemperature = aisleTemperature;
-    }
-
-    public CustomLinkedList<Shelf> getShelf() {
-        return shelves;
-    }
-    public void setShelf(CustomLinkedList<Shelf> shelf) {
-        this.shelves = shelf;
     }
 
     public String getAisleName() {

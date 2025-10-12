@@ -18,10 +18,15 @@ class ShelfTest {
 
     @Test
     void testAddProduct() {
+        assertEquals(0, shelf.getProducts().size());
+
         shelf.addProduct(p1);
         assertEquals(p1.toString() + "\n", shelf.getProducts().display());
+        assertEquals(1, shelf.getProducts().size());
+
         shelf.addProduct(p2);
         assertEquals(p1.toString() + "\n" + p2.toString() + "\n", shelf.getProducts().display());
+        assertEquals(2, shelf.getProducts().size());
     }
 
     @Test

@@ -38,6 +38,7 @@ public class CustomLinkedList<T> {
         if (head == null) return;
         if (head.getData().equals(data)) {
             head = head.getNext();
+            size--;
             return;
         }
 
@@ -45,6 +46,7 @@ public class CustomLinkedList<T> {
         while (temp.getNext() != null) {
             if (temp.getNext().getData().equals(data)) {
                 temp.setNext(temp.getNext().getNext());
+                size--;
                 return;
             }
             temp = temp.getNext();
