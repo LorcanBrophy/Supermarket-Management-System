@@ -32,4 +32,11 @@ public class Shelf {
     public void removeProduct(Product p) {
         products.remove(p);
     }
+
+    @Override
+    public String toString() {
+        return "Shelf " + shelfNum +
+                " | Total Products: " + products.size() +
+                " | Contents:\n" + products.display();
+    }
 }

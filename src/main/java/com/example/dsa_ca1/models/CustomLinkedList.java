@@ -17,7 +17,8 @@ class Node<T> {
 }
 
 public class CustomLinkedList<T> {
-    Node<T> head = null;
+    private Node<T> head = null;
+    private int size;
 
     public void add(T data) {
         Node<T> nn = new Node<>(data);
@@ -30,6 +31,7 @@ public class CustomLinkedList<T> {
             }
             temp.next = nn;
         }
+        size++;
     }
 
     public void remove(T data) {
@@ -57,5 +59,9 @@ public class CustomLinkedList<T> {
             temp = temp.getNext();
         }
         return str;
+    }
+
+    public int size() {
+        return size;
     }
 }

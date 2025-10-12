@@ -3,7 +3,7 @@ package com.example.dsa_ca1.models;
 public class Product {
 
     // fields
-    private String name;
+    private String productName;
     private float price;
     private float weight;
     private int quantity;
@@ -11,8 +11,8 @@ public class Product {
     private String photoURL;
 
     // constructor
-    public Product(String name, float price, float weight, int quantity, String temperature, String photoURL) {
-        this.name = name;
+    public Product(String productName, float price, float weight, int quantity, String temperature, String photoURL) {
+        this.productName = productName;
         this.price = price;
         this.weight = weight;
         this.quantity = quantity;
@@ -21,8 +21,8 @@ public class Product {
     }
 
     // getters and setters
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getproductName() { return productName; }
+    public void setproductName(String productName) { this.productName = productName; }
 
     public float getPrice() { return price; }
     public void setPrice(float price) { this.price = price; }
@@ -50,7 +50,7 @@ public class Product {
     // toString
     @Override
     public String toString() {
-        return "Product: " + name +
+        return "Product: " + productName +
                 " | Price: €" + String.format("%.2f", price) +
                 " | Weight: " + weight + "g" +
                 " | Quantity: " + quantity +
