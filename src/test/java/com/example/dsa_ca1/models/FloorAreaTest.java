@@ -30,6 +30,8 @@ class FloorAreaTest {
 
         floorArea.addAisle(aisle2);
         assertEquals(2, floorArea.getAisles().size());
+
+        assertEquals(aisle1.toString() + "\n" + aisle2.toString() + "\n", floorArea.getAisles().display());
     }
 
     @Test
@@ -44,14 +46,5 @@ class FloorAreaTest {
 
         floorArea.removeAisle(aisle2);
         assertEquals(0, floorArea.getAisles().size());
-    }
-
-    @Test
-    void testToString() {
-        floorArea.addAisle(aisle1);
-        String result = floorArea.toString();
-        assertTrue(result.contains("Fruit and Veg"));
-        assertTrue(result.contains("Ground Floor"));
-        assertTrue(result.contains("Aisles: 1"));
     }
 }

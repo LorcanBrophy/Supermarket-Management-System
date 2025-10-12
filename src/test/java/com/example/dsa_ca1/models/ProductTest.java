@@ -6,67 +6,69 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ProductTest {
 
-    private Product product1;
+    private Product product;
 
     @BeforeEach
     void setup() {
-        product1 = new Product("Cornflakes", 4, 720, 1, "room", "apple.png");
+        product = new Product("Cornflakes", 4, 720, 1, "room", "apple.png");
     }
 
     @Test
     void testConstructor() {
-        assertEquals("Cornflakes", product1.getproductName());
-        assertEquals(4, product1.getPrice());
-        assertEquals(720, product1.getWeight());
-        assertEquals(1, product1.getQuantity());
-        assertEquals("room", product1.getTemperature());
-        assertEquals("apple.png", product1.getPhotoURL());
+        assertEquals("Cornflakes", product.getproductName());
+        assertEquals(4, product.getPrice());
+        assertEquals(720, product.getWeight());
+        assertEquals(1, product.getQuantity());
+        assertEquals("room", product.getTemperature());
+        assertEquals("apple.png", product.getPhotoURL());
+
+        assertNotNull(product);
     }
 
     @Test
     void testSetters() {
-        product1.setproductName("Frosties");
-        product1.setPrice(5);
-        product1.setWeight(850);
-        product1.setQuantity(2);
-        product1.setTemperature("cold");
-        product1.setPhotoURL("frosties.png");
+        product.setproductName("Frosties");
+        product.setPrice(5);
+        product.setWeight(850);
+        product.setQuantity(2);
+        product.setTemperature("cold");
+        product.setPhotoURL("frosties.png");
 
-        assertEquals("Frosties", product1.getproductName());
-        assertEquals(5, product1.getPrice());
-        assertEquals(850, product1.getWeight());
-        assertEquals(2, product1.getQuantity());
-        assertEquals("cold", product1.getTemperature());
-        assertEquals("frosties.png", product1.getPhotoURL());
+        assertEquals("Frosties", product.getproductName());
+        assertEquals(5, product.getPrice());
+        assertEquals(850, product.getWeight());
+        assertEquals(2, product.getQuantity());
+        assertEquals("cold", product.getTemperature());
+        assertEquals("frosties.png", product.getPhotoURL());
     }
 
     @Test
     void testUpdateQuantity() {
-        product1.updateQuantity(3);
-        assertEquals(4, product1.getQuantity());
+        product.updateQuantity(3);
+        assertEquals(4, product.getQuantity());
 
-        product1.updateQuantity(-2);
-        assertEquals(2, product1.getQuantity());
+        product.updateQuantity(-2);
+        assertEquals(2, product.getQuantity());
     }
 
     @Test
     void testTotalValue() {
-        assertEquals(4, product1.totalValue());
+        assertEquals(4, product.totalValue());
 
-        product1.setPrice(6);
-        assertEquals(6, product1.getPrice());
+        product.setPrice(6);
+        assertEquals(6, product.getPrice());
 
-        product1.updateQuantity(3);
-        assertEquals(24, product1.totalValue());
+        product.updateQuantity(3);
+        assertEquals(24, product.totalValue());
     }
 
     @Test
     void testToString() {
-        assertTrue(product1.toString().contains("Cornflakes"));
-        assertFalse(product1.toString().contains("Weetabix"));
+        assertTrue(product.toString().contains("Cornflakes"));
+        assertFalse(product.toString().contains("Weetabix"));
 
-        assertTrue(product1.toString().contains("room"));
-        assertFalse(product1.toString().contains("freezer"));
+        assertTrue(product.toString().contains("room"));
+        assertFalse(product.toString().contains("freezer"));
     }
 
 }

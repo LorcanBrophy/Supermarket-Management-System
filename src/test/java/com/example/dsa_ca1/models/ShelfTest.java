@@ -17,6 +17,12 @@ class ShelfTest {
     }
 
     @Test
+    void testConstructor() {
+        assertEquals(1, shelf.getShelfNum());
+        assertNotNull(shelf.getProducts());
+    }
+
+    @Test
     void testAddProduct() {
         assertEquals(0, shelf.getProducts().size());
 

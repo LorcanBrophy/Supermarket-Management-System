@@ -11,19 +11,30 @@ class AisleTest {
 
     @BeforeEach
     void setup() {
-        aisle = new Aisle("Cereal", 10, 3, "room");
+        aisle = new Aisle("Cereal", 10, 3, "Room");
 
         shelf1 = new Shelf(1);
         shelf2 = new Shelf(2);
 
-        Product p1 = new Product("Cornflakes", 4.0f, 720f, 7, "room", "a.png");
-        Product p2 = new Product("Weetabix", 4.5f, 720f, 16, "room", "b.png");
-        Product p3 = new Product("Porridge", 3f, 950f, 16, "room", "c.png");
+        Product p1 = new Product("Cornflakes", 4.0f, 720f, 7, "Room", "a.png");
+        Product p2 = new Product("Weetabix", 4.5f, 720f, 16, "Room", "b.png");
+        Product p3 = new Product("Porridge", 3f, 950f, 16, "Room", "c.png");
 
         shelf1.addProduct(p1);
         shelf2.addProduct(p2);
         shelf2.addProduct(p3);
     }
+
+    @Test
+    void testConstructor() {
+        assertEquals("Cereal", aisle.getAisleName());
+        assertEquals(10, aisle.getAisleWidth());
+        assertEquals(3, aisle.getAisleHeight());
+        assertEquals("Room", aisle.getAisleTemperature());
+        
+        assertNotNull(aisle.getShelves());
+    }
+    
     @Test
     void testAddShelf() {
         assertEquals(0, aisle.getShelves().size());
