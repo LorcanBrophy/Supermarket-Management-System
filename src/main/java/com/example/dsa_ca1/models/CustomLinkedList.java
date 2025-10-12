@@ -1,49 +1,61 @@
 package com.example.dsa_ca1.models;
 
-public class CustomLinkedList<T> {
-    private class Node {
-        private T data;
-        private Node next;
+class Node<T> {
+    T data;
+    Node<T> next;
 
-        Node(T data) {
-            this.data = data;
-        }
-
-        public T getData() {
-            return data;
-        }
-
-        public void setData(T data) {
-            this.data = data;
-        }
-
-        public Node getNext() {
-            return next;
-        }
-
-        public void setNext(Node next) {
-            this.next = next;
-        }
+    public Node(T data) {
+        this.data = data;
+        this.next = null;
     }
 
-    private Node head;
+    public T getData() { return data; }
+    public void setData(T data) { this.data = data; }
+
+    public Node<T> getNext() { return next; }
+    public void setNext(Node<T> next) { this.next = next; }
+}
+
+public class CustomLinkedList<T> {
+    Node<T> head = null;
 
     public void add(T data) {
-        Node nn = new Node(data);
-        if (head != null) { // not first node in LL
-            Node current = head; // start at head of LL
-            while (current.getNext() != null) { // not at final node
-                current = current.next;
+        Node<T> nn = new Node<>(data);
+        if (head == null) {
+            head = nn;
+        } else {
+            Node<T> temp = head;
+            while (temp.getNext() != null) {
+                temp = temp.getNext();
             }
-            current.setNext(nn);
-        } else head = nn; // make head node
+            temp.next = nn;
+        }
     }
 
-    public void display() {
-        Node current = head;
-        while (current != null) {
-            System.out.println(current.getData());
-            current = current.getNext();
+    public void remove(T data) {
+        if (head == null) return;
+        if (head.getData().equals(data)) {
+            head = head.getNext();
+            return;
         }
+
+        Node<T> temp = head;
+        while (temp.getNext() != null) {
+            if (temp.getNext().getData().equals(data)) {
+                temp.setNext(temp.getNext().getNext());
+                return;
+            }
+            temp = temp.getNext();
+        }
+    }
+
+    public String display() {
+        String str = "";
+        Node<T> temp = head;
+        while (temp != null) {
+            str += temp.getData() + "\n";
+            temp = temp.getNext();
+        }
+        return str;
     }
 }

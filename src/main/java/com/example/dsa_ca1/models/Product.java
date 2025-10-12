@@ -50,13 +50,11 @@ public class Product {
     // toString
     @Override
     public String toString() {
-        return "Product{" +
-                "name='" + name + '\'' +
-                ", price=" + price +
-                ", weight=" + weight +
-                ", quantity=" + quantity +
-                ", temperature='" + temperature + '\'' +
-                ", photoURL='" + photoURL + '\'' +
-                '}';
+        return "Product: " + name +
+                " | Price: €" + String.format("%.2f", price) +
+                " | Weight: " + weight + "g" +
+                " | Quantity: " + quantity +
+                " | Temp: " + temperature +
+                " | Photo: " + photoURL;
     }
 }
