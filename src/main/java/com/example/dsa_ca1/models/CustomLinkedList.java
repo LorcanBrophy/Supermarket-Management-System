@@ -1,23 +1,7 @@
 package com.example.dsa_ca1.models;
 
-class Node<T> {
-    T data;
-    Node<T> next;
-
-    public Node(T data) {
-        this.data = data;
-        this.next = null;
-    }
-
-    public T getData() { return data; }
-    public void setData(T data) { this.data = data; }
-
-    public Node<T> getNext() { return next; }
-    public void setNext(Node<T> next) { this.next = next; }
-}
-
 public class CustomLinkedList<T> {
-    private Node<T> head = null;
+    public Node<T> head = null;
     private int size;
 
     public void add(T data) {
