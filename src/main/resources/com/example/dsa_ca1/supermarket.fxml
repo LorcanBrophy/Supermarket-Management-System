@@ -11,6 +11,8 @@
     </top>
 
     <center>
-        <TabPane fx:id="floorTabs" prefWidth="600" prefHeight="400"/>
+        <TabPane fx:id="floorTabs" tabClosingPolicy="UNAVAILABLE"/>
+
+
     </center>
 </BorderPane>

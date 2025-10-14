@@ -1,0 +1,29 @@
+.root {
+    -fx-background-color: #c6eeff;
+}
+
+.button {
+    -fx-background-color: #0078D7;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+.button:hover {
+    -fx-background-color: #005fa3;
+    -fx-cursor: hand;
+}
+
+.tab-pane {
+    -fx-background-color: white;
+}
+
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+}
+
+.setup-text {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: linear-gradient(#2c82c9, #0078D7);
+}

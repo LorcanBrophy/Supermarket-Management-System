@@ -4,16 +4,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.dsa_ca1.controllers.SetupController">
+<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.dsa_ca1.controllers.SetupController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
 
-    <Label text="Enter Supermarket Name:"/>
+    <Label text="Enter Supermarket Name:" styleClass="setup-text"/>
     <TextField fx:id="supermarketName" promptText="Supermarket Name"/>
 
-    <Label text="Enter Number of Floors:"/>
+    <Label text="Enter Number of Floors:" styleClass="setup-text"/>
     <Spinner fx:id="numFloors" />
 
     <Button text="Create Supermarket" onAction="#onCreateSupermarketButtonPressed"/>

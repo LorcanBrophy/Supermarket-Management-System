@@ -1,6 +1,8 @@
 package com.example.dsa_ca1.models;
 
-public class CustomLinkedList<T> {
+import java.util.Iterator;
+
+public class CustomLinkedList<T> implements Iterable<T> {
     public Node<T> head = null;
     private int size;
 
@@ -38,16 +40,19 @@ public class CustomLinkedList<T> {
     }
 
     public String display() {
-        String str = "";
-        Node<T> temp = head;
-        while (temp != null) {
-            str += temp.getData() + "\n";
-            temp = temp.getNext();
+        StringBuilder str = new StringBuilder();
+        for (T item : this) {
+            str.append(item).append("\n");
         }
-        return str;
+        return str.toString();
     }
 
     public int size() {
         return size;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new CustomIterator<>(head);
     }
 }
