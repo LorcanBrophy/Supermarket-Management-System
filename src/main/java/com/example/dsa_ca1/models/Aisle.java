@@ -46,7 +46,6 @@ public class Aisle {
     public CustomLinkedList<Shelf> getShelves() {
         return shelves;
     }
-
     public void setShelves(CustomLinkedList<Shelf> shelves) {
         this.shelves = shelves;
     }
