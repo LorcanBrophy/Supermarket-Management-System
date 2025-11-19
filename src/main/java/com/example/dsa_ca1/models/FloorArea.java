@@ -40,7 +40,7 @@ public class FloorArea {
         aisles.add(a);
     }
     public void removeAisle(Aisle a) {
-        aisles.remove(a);
+        aisles.removeValue(a);
     }
 
     @Override

@@ -31,6 +31,6 @@ public class Supermarket {
     }
 
     public void removeFloorArea(FloorArea fA) {
-        floorAreas.remove(fA);
+        floorAreas.removeValue(fA);
     }
 }

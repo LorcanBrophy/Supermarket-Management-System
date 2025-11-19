@@ -7,10 +7,7 @@ public class CustomLinkedList<T> implements Iterable<T> {
     private Node<T> tail = null;
     private int size;
 
-
-
-    //|| OLD METHOD ADDS TO TAIL ONLY ||
-
+    // add elements to linked list
     public void add(T data) {
         Node<T> nn = new Node<>(data);
         if (head == null) {
@@ -25,7 +22,7 @@ public class CustomLinkedList<T> implements Iterable<T> {
         size++;
     }
 
-    /*public void addHead(T data) {
+    public void addHead(T data) {
         Node<T> nn = new Node<>(data);
         if (size == 0) {
             head = tail = nn;
@@ -45,12 +42,11 @@ public class CustomLinkedList<T> implements Iterable<T> {
             tail = tail.getNext();
         }
         size++;
-    }*/
+    }
 
 
-    //|| OLD METHOD REMOVES TAIL ONLY ||
-
-    public void remove(T data) {
+    // remove elements from linked list
+    public void removeValue(T data) {
         if (head == null) return;
 
         if (head.getData().equals(data)) {
@@ -68,9 +64,14 @@ public class CustomLinkedList<T> implements Iterable<T> {
             }
             temp = temp.getNext();
         }
+        while (temp!=null) {
+            if (data.equals(temp.getData())) {
+                temp=temp.next;
+            }
+        }
     }
 
-    /*public void removeHead() {
+    public void removeHead() {
         if (size == 0) return;
 
         head = head.getNext();
@@ -92,8 +93,9 @@ public class CustomLinkedList<T> implements Iterable<T> {
             tail = temp;
         }
         size--;
-    }*/
+    }
 
+    // display elements using iterator
     public String display() {
         String str = "";
         for (T item : this) {

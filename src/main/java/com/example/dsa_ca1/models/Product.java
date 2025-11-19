@@ -21,8 +21,8 @@ public class Product {
     }
 
     // getters and setters
-    public String getproductName() { return productName; }
-    public void setproductName(String productName) { this.productName = productName; }
+    public String getProductName() { return productName; }
+    public void setProductName(String productName) { this.productName = productName; }
 
     public float getPrice() { return price; }
     public void setPrice(float price) { this.price = price; }

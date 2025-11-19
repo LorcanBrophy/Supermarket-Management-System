@@ -15,7 +15,7 @@ class ProductTest {
 
     @Test
     void testConstructor() {
-        assertEquals("Cornflakes", product.getproductName());
+        assertEquals("Cornflakes", product.getProductName());
         assertEquals(4, product.getPrice());
         assertEquals(720, product.getWeight());
         assertEquals(1, product.getQuantity());
@@ -27,14 +27,14 @@ class ProductTest {
 
     @Test
     void testSetters() {
-        product.setproductName("Frosties");
+        product.setProductName("Frosties");
         product.setPrice(5);
         product.setWeight(850);
         product.setQuantity(2);
         product.setTemperature("cold");
         product.setPhotoURL("frosties.png");
 
-        assertEquals("Frosties", product.getproductName());
+        assertEquals("Frosties", product.getProductName());
         assertEquals(5, product.getPrice());
         assertEquals(850, product.getWeight());
         assertEquals(2, product.getQuantity());

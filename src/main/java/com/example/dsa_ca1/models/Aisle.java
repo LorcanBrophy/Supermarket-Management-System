@@ -55,6 +55,6 @@ public class Aisle {
     }
 
     public void removeShelf(Shelf s) {
-        shelves.remove(s);
+        shelves.removeValue(s);
     }
 }

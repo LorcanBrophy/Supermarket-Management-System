@@ -30,7 +30,7 @@ public class Shelf {
     }
 
     public void removeProduct(Product p) {
-        products.remove(p);
+        products.removeValue(p);
     }
 
     @Override
