@@ -7,7 +7,6 @@ import com.example.dsa_ca1.models.Shelf;
 import com.example.dsa_ca1.models.Product;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -29,6 +28,7 @@ public class SupermarketController {
     @FXML private ListView<String> shelfList;
 
     @FXML private FloorArea selectedFloorArea;
+    @FXML private Aisle selectedAisle;
 
     private Supermarket supermarket;
 
@@ -76,7 +76,7 @@ public class SupermarketController {
             shelfList.getItems().clear();
             productTable.getItems().clear();
 
-            Aisle selectedAisle = null;
+            selectedAisle = null;
             outerAisle:
             for (FloorArea floorArea : supermarket.getFloorAreas()) {
                 for (Aisle aisle : floorArea.getAisles()) {
@@ -123,6 +123,27 @@ public class SupermarketController {
 
     }
 
+    private FloorArea findFloorAreaByDisplay(String displayText) {
+        for (FloorArea floorArea : supermarket.getFloorAreas()) {
+            String display = floorArea.getFloorAreaName() + " (" + floorArea.getFloorLevel() + ")";
+            if (display.equals(displayText)) {
+                return floorArea;
+            }
+        }
+        return null;
+    }
+
+    private Aisle findAisleByDisplay(String displayText) {
+        if (selectedFloorArea == null) return null;
+
+        for (Aisle aisle : selectedFloorArea.getAisles()) {
+            if (aisle.getAisleName().equals(displayText)) {
+                return aisle;
+            }
+        }
+        return null;
+    }
+
     @FXML
     private void onAddFloorArea() {
         // name
@@ -152,23 +173,17 @@ public class SupermarketController {
         String selectedText = floorAreaList.getSelectionModel().getSelectedItem();
         if (selectedText == null) return;
 
-        FloorArea toRemove = null;
-        for (FloorArea fa : supermarket.getFloorAreas()) {
-            String display = fa.getFloorAreaName() + " (" + fa.getFloorLevel() + ")";
-            if (display.equals(selectedText)) {
-                toRemove = fa;
-                break;
-            }
-        }
+        FloorArea toRemove = findFloorAreaByDisplay(selectedText);
+        if (toRemove == null) return;
 
-        if (toRemove != null) {
-            supermarket.getFloorAreas().removeValue(toRemove);
-            floorAreaList.getItems().remove(selectedText);
+        selectedFloorArea = null;
 
-            aisleList.getItems().clear();
-            shelfList.getItems().clear();
-            productTable.getItems().clear();
-        }
+        supermarket.getFloorAreas().removeValue(toRemove);
+        floorAreaList.getItems().remove(selectedText);
+
+        aisleList.getItems().clear();
+        shelfList.getItems().clear();
+        productTable.getItems().clear();
     }
 
     @FXML
@@ -176,14 +191,7 @@ public class SupermarketController {
         String selectedText = floorAreaList.getSelectionModel().getSelectedItem();
         if (selectedText == null) return;
 
-        FloorArea toEdit = null;
-        for (FloorArea fa : supermarket.getFloorAreas()) {
-            String display = fa.getFloorAreaName() + " (" + fa.getFloorLevel() + ")";
-            if (display.equals(selectedText)) {
-                toEdit = fa;
-                break;
-            }
-        }
+        FloorArea toEdit = findFloorAreaByDisplay(selectedText);
         if (toEdit == null) return;
 
         TextInputDialog nameDialog = new TextInputDialog(toEdit.getFloorAreaName());
@@ -203,12 +211,12 @@ public class SupermarketController {
         toEdit.setFloorAreaName(newName);
         toEdit.setFloorLevel(newLevel);
 
-        int selectedIndex = floorAreaList.getSelectionModel().getSelectedIndex();
-        floorAreaList.getItems().set(selectedIndex, newName + " (" + newLevel + ")");
+        int index = floorAreaList.getSelectionModel().getSelectedIndex();
+        floorAreaList.getItems().set(index, newName + " (" + newLevel + ")");
     }
 
     @FXML
-    public void onAddAisle(ActionEvent event) {
+    public void onAddAisle() {
         if (selectedFloorArea == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No Floor Area Selected");
@@ -265,25 +273,41 @@ public class SupermarketController {
 
         Aisle newAisle = new Aisle(name, width, height, temp);
         selectedFloorArea.addAisle(newAisle);
+
+        aisleList.getItems().add(name);
     }
 
     @FXML
-    public void onRemoveAisle(ActionEvent event) {
+    public void onRemoveAisle() {
+        String selectedText = aisleList.getSelectionModel().getSelectedItem();
+        if (selectedText == null) return;
+
+        Aisle toRemove = findAisleByDisplay(selectedText);
+        if (toRemove == null) return;
+
+        selectedAisle = null;
+
+        selectedFloorArea.getAisles().removeValue(toRemove);
+
+        aisleList.getItems().remove(selectedText);
+
+        shelfList.getItems().clear();
+        productTable.getItems().clear();
     }
 
     @FXML
-    public void onEditAisle(ActionEvent event) {
+    public void onEditAisle() {
     }
 
     @FXML
-    public void onAddShelf(ActionEvent event) {
+    public void onAddShelf() {
     }
 
     @FXML
-    public void onRemoveShelf(ActionEvent event) {
+    public void onRemoveShelf() {
     }
 
     @FXML
-    public void onEditShelf(ActionEvent event) {
+    public void onEditShelf() {
     }
 }

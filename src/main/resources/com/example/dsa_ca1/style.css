@@ -30,7 +30,6 @@
 .list-view {
     -fx-background-color: #2a2a2a;
     -fx-control-inner-background: #2a2a2a;
-    -fx-border-color: #444444;
     -fx-border-radius: 5;
 }
 
@@ -41,10 +40,6 @@
 
 .list-cell:hover {
     -fx-background-color: #3a3a3a;
-}
-
-.list-cell {
-    -fx-background-color: transparent;
 }
 
 .table-view {
