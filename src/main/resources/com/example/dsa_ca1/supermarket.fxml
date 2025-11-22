@@ -3,60 +3,75 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.dsa_ca1.controllers.SupermarketController">
+<TabPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.dsa_ca1.controllers.SupermarketController">
+    <Tab text="Browser" closable="false">
+        <BorderPane>
+            <center>
+                <TextField promptText="Search for product"/>
+                <HBox spacing="10" style="-fx-padding: 10;">
+                    <VBox spacing="5">
+                        <Label text="Floor Areas"/>
+                        <ListView fx:id="floorAreaList" prefWidth="270"/>
+                        <HBox spacing="5">
+                            <Button text="Add" onAction="#onAddFloorArea"/>
+                            <Button text="Remove" onAction="#onRemoveFloorArea"/>
+                            <Button text="Edit" onAction="#onEditFloorArea"/>
+                        </HBox>
+                    </VBox>
 
-    <top>
-        <Label text="Supermarket Browser" style="-fx-padding: 10;" />
-    </top>
+                    <VBox spacing="5">
+                        <Label text="Aisles"/>
+                        <ListView fx:id="aisleList" prefWidth="270"/>
+                        <HBox spacing="5">
+                            <Button text="Add" onAction="#onAddAisle"/>
+                            <Button text="Remove" onAction="#onRemoveAisle"/>
+                            <Button text="Edit" onAction="#onEditAisle"/>
+                        </HBox>
+                    </VBox>
 
-    <center>
-        <HBox spacing="10" style="-fx-padding: 10;">
-            <VBox spacing="5">
-                <Label text="Floor Areas" />
-                <ListView fx:id="floorAreaList" prefWidth="270" />
-                <HBox spacing="5">
-                    <Button text="Add" onAction="#onAddFloorArea"/>
-                    <Button text="Remove" onAction="#onRemoveFloorArea"/>
-                    <Button text="Edit" onAction="#onEditFloorArea"/>
+                    <VBox spacing="5">
+                        <Label text="Shelves"/>
+                        <ListView fx:id="shelfList" prefWidth="270"/>
+                        <HBox spacing="5">
+                            <Button text="Add" onAction="#onAddShelf"/>
+                            <Button text="Remove" onAction="#onRemoveShelf"/>
+                        </HBox>
+                    </VBox>
                 </HBox>
-            </VBox>
+            </center>
 
-            <VBox spacing="5">
-                <Label text="Aisles" />
-                <ListView fx:id="aisleList" prefWidth="270" />
-                <HBox spacing="5">
-                    <Button text="Add" onAction="#onAddAisle"/>
-                    <Button text="Remove" onAction="#onRemoveAisle"/>
-                    <Button text="Edit" onAction="#onEditAisle"/>
-                </HBox>
-            </VBox>
+            <bottom>
+                <VBox spacing="5" style="-fx-padding: 0 10 10 10;">
+                    <Label text="Products"/>
+                    <TableView fx:id="productTable" prefHeight="240">
+                        <columns>
+                            <TableColumn fx:id="productNameCol" text="Name" prefWidth="148"/>
+                            <TableColumn fx:id="productPriceCol" text="Price" prefWidth="148"/>
+                            <TableColumn fx:id="productWeightCol" text="Weight" prefWidth="148"/>
+                            <TableColumn fx:id="productQuantityCol" text="Quantity" prefWidth="148"/>
+                            <TableColumn fx:id="productTempCol" text="Temp" prefWidth="148"/>
+                            <TableColumn fx:id="photoUrl" text="Photo" prefWidth="148"/>
+                        </columns>
+                    </TableView>
 
-            <VBox spacing="5">
-                <Label text="Shelves" />
-                <ListView fx:id="shelfList" prefWidth="270" />
-                <HBox spacing="5">
-                    <Button text="Add" onAction="#onAddShelf"/>
-                    <Button text="Remove" onAction="#onRemoveShelf"/>
-                    <Button text="Edit" onAction="#onEditShelf"/>
-                </HBox>
-            </VBox>
-        </HBox>
-    </center>
+                    <HBox spacing="5">
+                        <Button text="Add" onAction="#onAddProduct"/>
+                        <Button text="Remove" onAction="#onRemoveProduct"/>
+                        <Button text="Edit" onAction="#onEditProduct"/>
+                        <Button text="Search" onAction="#onSearchProduct"/>
+                    </HBox>
+                </VBox>
+            </bottom>
 
-    <bottom>
-        <VBox spacing="5" style="-fx-padding: 10;">
-            <Label text="Products" />
-            <TableView fx:id="productTable" prefHeight="270">
-                <columns>
-                    <TableColumn fx:id="productNameCol" text="Name" prefWidth="148" />
-                    <TableColumn fx:id="productPriceCol" text="Price" prefWidth="148" />
-                    <TableColumn fx:id="productWeightCol" text="Weight" prefWidth="148" />
-                    <TableColumn fx:id="productQuantityCol" text="Quantity" prefWidth="148" />
-                    <TableColumn fx:id="productTempCol" text="Temp" prefWidth="148" />
-                    <TableColumn fx:id="photoUrl" text="Photo" prefWidth="148" />
-                </columns>
-            </TableView>
-        </VBox>
-    </bottom>
-</BorderPane>
+        </BorderPane>
+    </Tab>
+
+    <Tab text="Map" closable="false">
+        <AnchorPane fx:id="mapPane">
+            <Label text="rasclaat map view sooon my drilla" layoutX="20" layoutY="20"/>
+        </AnchorPane>
+    </Tab>
+
+</TabPane>
+
 

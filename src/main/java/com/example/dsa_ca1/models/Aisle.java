@@ -57,4 +57,10 @@ public class Aisle {
     public void removeShelf(Shelf s) {
         shelves.removeValue(s);
     }
+
+    @Override
+    public String toString() {
+        return "Aisle: " + aisleName + " (W: " + aisleWidth + ",  H: " + aisleHeight + ",  Temp: " + aisleTemperature + ")" +
+                "\nShelves: " + shelves.size();
+    }
 }

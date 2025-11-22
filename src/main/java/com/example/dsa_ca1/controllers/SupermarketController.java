@@ -7,12 +7,19 @@ import com.example.dsa_ca1.models.Shelf;
 import com.example.dsa_ca1.models.Product;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+
+import java.util.Objects;
 
 public class SupermarketController {
-
+    @FXML private AnchorPane mapPane;
     @FXML private TableView<Product> productTable;
 
     @FXML private TableColumn<Product, String> productNameCol;
@@ -27,8 +34,9 @@ public class SupermarketController {
     @FXML private ListView<String> aisleList;
     @FXML private ListView<String> shelfList;
 
-    @FXML private FloorArea selectedFloorArea;
-    @FXML private Aisle selectedAisle;
+    private FloorArea selectedFloorArea;
+    private Aisle selectedAisle;
+    private Shelf selectedShelf;
 
     private Supermarket supermarket;
 
@@ -98,7 +106,7 @@ public class SupermarketController {
             productTable.getItems().clear();
             if (newVal == null) return;
 
-            Shelf selectedShelf = null;
+            selectedShelf = null;
             outerShelf:
             for (FloorArea floorArea : supermarket.getFloorAreas()) {
                 for (Aisle aisle : floorArea.getAisles()) {
@@ -113,8 +121,8 @@ public class SupermarketController {
 
             if (selectedShelf != null) {
                 ObservableList<Product> products = FXCollections.observableArrayList();
-                for (Product p : selectedShelf.getProducts()) {
-                    products.add(p);
+                for (Product product : selectedShelf.getProducts()) {
+                    products.add(product);
                 }
                 productTable.setItems(products);
             }
@@ -123,6 +131,7 @@ public class SupermarketController {
 
     }
 
+    @FXML
     private FloorArea findFloorAreaByDisplay(String displayText) {
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
             String display = floorArea.getFloorAreaName() + " (" + floorArea.getFloorLevel() + ")";
@@ -133,12 +142,25 @@ public class SupermarketController {
         return null;
     }
 
+    @FXML
     private Aisle findAisleByDisplay(String displayText) {
         if (selectedFloorArea == null) return null;
 
         for (Aisle aisle : selectedFloorArea.getAisles()) {
             if (aisle.getAisleName().equals(displayText)) {
                 return aisle;
+            }
+        }
+        return null;
+    }
+
+    @FXML
+    private Shelf findShelfByDisplay(String displayText) {
+        if (selectedAisle == null) return null;
+
+        for (Shelf shelf : selectedAisle.getShelves()) {
+            if (("Shelf " + shelf.getShelfNum()).equals(displayText)) {
+                return shelf;
             }
         }
         return null;
@@ -162,10 +184,28 @@ public class SupermarketController {
         String level = levelDialog.showAndWait().orElse("").trim();
         if (level.isEmpty()) return;
 
+        for (FloorArea floorArea : supermarket.getFloorAreas()) {
+            if (floorArea.getFloorAreaName().equals(name) && floorArea.getFloorLevel().equals(level)) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Duplicate Floor Area");
+                alert.setHeaderText(null);
+                alert.setContentText("A Floor Area with that name and level already exists.");
+                alert.showAndWait();
+                return;
+            }
+        }
+
         FloorArea newFloorArea = new FloorArea(name, level);
         supermarket.getFloorAreas().add(newFloorArea);
 
         floorAreaList.getItems().add(name + " (" + level + ")");
+
+        drawFloorAreasMap();
+
+        System.out.println("Linked List:");
+        for (FloorArea floorArea : supermarket.getFloorAreas()) {
+            System.out.println(floorArea.toString());
+        }
     }
 
     @FXML
@@ -194,6 +234,7 @@ public class SupermarketController {
         FloorArea toEdit = findFloorAreaByDisplay(selectedText);
         if (toEdit == null) return;
 
+        // name
         TextInputDialog nameDialog = new TextInputDialog(toEdit.getFloorAreaName());
         nameDialog.setTitle("Edit Floor Area");
         nameDialog.setHeaderText("Edit Floor Area Name");
@@ -201,6 +242,7 @@ public class SupermarketController {
         String newName = nameDialog.showAndWait().orElse("").trim();
         if (newName.isEmpty()) return;
 
+        // level
         TextInputDialog levelDialog = new TextInputDialog(toEdit.getFloorLevel());
         levelDialog.setTitle("Edit Floor Area");
         levelDialog.setHeaderText("Edit Floor Level");
@@ -221,7 +263,7 @@ public class SupermarketController {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No Floor Area Selected");
             alert.setHeaderText(null);
-            alert.setContentText("Please select a floor area before adding an aisle.");
+            alert.setContentText("Please select a floor area.");
             alert.showAndWait();
             return;
         }
@@ -233,6 +275,17 @@ public class SupermarketController {
         nameDialog.setContentText("Name:");
         String name = nameDialog.showAndWait().orElse("").trim();
         if (name.isEmpty()) return;
+
+        for (Aisle aisle : selectedFloorArea.getAisles()) {
+            if (aisle.getAisleName().equalsIgnoreCase(name)) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Duplicate Aisle");
+                alert.setHeaderText(null);
+                alert.setContentText("An aisle with that name already exists in this floor area.");
+                alert.showAndWait();
+                return;
+            }
+        }
 
         // width
         TextInputDialog widthDialog = new TextInputDialog();
@@ -275,6 +328,13 @@ public class SupermarketController {
         selectedFloorArea.addAisle(newAisle);
 
         aisleList.getItems().add(name);
+
+        for (FloorArea floorArea : supermarket.getFloorAreas()) {
+            System.out.println(floorArea.toString());
+            for (Aisle aisle : floorArea.getAisles()) {
+                System.out.println(aisle.toString());
+            }
+        }
     }
 
     @FXML
@@ -288,7 +348,6 @@ public class SupermarketController {
         selectedAisle = null;
 
         selectedFloorArea.getAisles().removeValue(toRemove);
-
         aisleList.getItems().remove(selectedText);
 
         shelfList.getItems().clear();
@@ -297,17 +356,333 @@ public class SupermarketController {
 
     @FXML
     public void onEditAisle() {
+        String selectedText = aisleList.getSelectionModel().getSelectedItem();
+        if (selectedText == null) return;
+
+        Aisle toEdit = findAisleByDisplay(selectedText);
+        if (toEdit == null) return;
+
+        // name
+        TextInputDialog nameDialog = new TextInputDialog();
+        nameDialog.setTitle("Add Aisle");
+        nameDialog.setHeaderText("Set Aisle Name");
+        nameDialog.setContentText("Name:");
+        String newName = nameDialog.showAndWait().orElse("").trim();
+        if (newName.isEmpty()) return;
+
+        // width
+        TextInputDialog widthDialog = new TextInputDialog();
+        widthDialog.setTitle("Add Aisle");
+        widthDialog.setHeaderText("Set Aisle Width");
+        widthDialog.setContentText("Width (number):");
+        String widthStr = widthDialog.showAndWait().orElse("").trim();
+        if (widthStr.isEmpty()) return;
+
+        // height
+        TextInputDialog heightDialog = new TextInputDialog();
+        heightDialog.setTitle("Add Aisle");
+        heightDialog.setHeaderText("Set Aisle Height");
+        heightDialog.setContentText("Height (number):");
+        String heightStr = heightDialog.showAndWait().orElse("").trim();
+        if (heightStr.isEmpty()) return;
+
+        // temp
+        TextInputDialog tempDialog = new TextInputDialog();
+        tempDialog.setTitle("Add Aisle");
+        tempDialog.setHeaderText("Set Aisle Temperature");
+        tempDialog.setContentText("Temp (e.g. Room, Frozen):");
+        String newTemp = tempDialog.showAndWait().orElse("").trim();
+        if (newTemp.isEmpty()) return;
+
+        int newWidth, newHeight;
+        try {
+            newWidth = Integer.parseInt(widthStr);
+            newHeight = Integer.parseInt(heightStr);
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Number");
+            alert.setHeaderText(null);
+            alert.setContentText("Width and height must be numbers.");
+            alert.showAndWait();
+            return;
+        }
+
+        toEdit.setAisleName(newName);
+        toEdit.setAisleWidth(newWidth);
+        toEdit.setAisleHeight(newHeight);
+        toEdit.setAisleTemperature(newTemp);
+
+        int index = aisleList.getSelectionModel().getSelectedIndex();
+        aisleList.getItems().set(index, newName);
     }
 
     @FXML
     public void onAddShelf() {
+        if (selectedAisle == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Aisle Selected");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select an aisle.");
+            alert.showAndWait();
+            return;
+        }
+
+        int shelfNum = selectedAisle.getShelves().size() + 1;
+
+        Shelf newShelf = new Shelf(shelfNum);
+        selectedAisle.addShelf(newShelf);
+
+        shelfList.getItems().add("Shelf " + shelfNum);
     }
 
     @FXML
     public void onRemoveShelf() {
+        String selectedText = shelfList.getSelectionModel().getSelectedItem();
+        if (selectedText == null) return;
+
+        Shelf toRemove = findShelfByDisplay(selectedText);
+        if (toRemove == null) return;
+
+        selectedShelf = null;
+
+        selectedAisle.getShelves().removeValue(toRemove);
+        shelfList.getItems().remove(selectedText);
+
+        productTable.getItems().clear();
     }
 
     @FXML
-    public void onEditShelf() {
+    public void onAddProduct(ActionEvent event) {
+        if (selectedShelf == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Shelf Selected");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select a shelf.");
+            alert.showAndWait();
+            return;
+        }
+
+        // name
+        TextInputDialog nameDialog = new TextInputDialog();
+        nameDialog.setTitle("Add Product");
+        nameDialog.setHeaderText("Enter Product Name");
+        nameDialog.setContentText("Name:");
+        String name = nameDialog.showAndWait().orElse("").trim();
+        if (name.isEmpty()) return;
+
+        // price
+        TextInputDialog priceDialog = new TextInputDialog();
+        priceDialog.setTitle("Add Product");
+        priceDialog.setHeaderText("Set Product Price");
+        priceDialog.setContentText("Price:");
+        String priceStr = priceDialog.showAndWait().orElse("").trim();
+        if (priceStr.isEmpty()) return;
+
+        // weight
+        TextInputDialog weightDialog = new TextInputDialog();
+        weightDialog.setTitle("Add Product");
+        weightDialog.setHeaderText("Set Product Weight");
+        weightDialog.setContentText("Weight:");
+        String weightStr = weightDialog.showAndWait().orElse("").trim();
+        if (weightStr.isEmpty()) return;
+
+        // quantity
+        TextInputDialog quantityDialog = new TextInputDialog();
+        quantityDialog.setTitle("Add Product");
+        quantityDialog.setHeaderText("Set Product Quantity");
+        quantityDialog.setContentText("Quantity:");
+        String quantityStr = quantityDialog.showAndWait().orElse("").trim();
+        if (quantityStr.isEmpty()) return;
+
+        // temp
+        TextInputDialog tempDialog = new TextInputDialog();
+        tempDialog.setTitle("Add Product");
+        tempDialog.setHeaderText("Set Product Temperature");
+        tempDialog.setContentText("Temp (e.g. Room, Frozen):");
+        String temp = tempDialog.showAndWait().orElse("").trim();
+        if (temp.isEmpty()) return;
+
+        // photo url
+        TextInputDialog photoDialog = new TextInputDialog();
+        photoDialog.setTitle("Add Product");
+        photoDialog.setHeaderText("Set Product Photo URL");
+        photoDialog.setContentText("URL:");
+        String photoUrl = photoDialog.showAndWait().orElse("").trim();
+        if (photoUrl.isEmpty()) return;
+
+        float price, weight;
+        int quantity;
+        try {
+            price = Float.parseFloat(priceStr);
+            weight = Float.parseFloat(weightStr);
+            quantity = Integer.parseInt(quantityStr);
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Input");
+            alert.setHeaderText(null);
+            alert.setContentText("Price, weight, and quantity must be valid numbers.");
+            alert.showAndWait();
+            return;
+        }
+
+        Product newProduct = new Product(name, price, weight, quantity, temp, photoUrl);
+
+        selectedShelf.addProduct(newProduct);
+
+        productTable.getItems().add(newProduct);
     }
+
+    @FXML
+    public void onRemoveProduct() {
+        Product selected = productTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        selectedShelf.removeProduct(selected);
+        productTable.getItems().remove(selected);
+    }
+
+    @FXML
+    public void onEditProduct() {
+        Product selected = productTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+
+        // name
+        TextInputDialog nameDialog = new TextInputDialog(selected.getProductName());
+        nameDialog.setHeaderText("Edit Product Name");
+        String newName = nameDialog.showAndWait().orElse("").trim();
+        if (newName.isEmpty()) return;
+
+        // price
+        TextInputDialog priceDialog = new TextInputDialog(String.valueOf(selected.getPrice()));
+        priceDialog.setHeaderText("Edit Product Price");
+        String priceStr = priceDialog.showAndWait().orElse("").trim();
+        if (priceStr.isEmpty()) return;
+
+        // weight
+        TextInputDialog weightDialog = new TextInputDialog(String.valueOf(selected.getWeight()));
+        weightDialog.setHeaderText("Edit Product Weight");
+        String weightStr = weightDialog.showAndWait().orElse("").trim();
+        if (weightStr.isEmpty()) return;
+
+        // quantity
+        TextInputDialog qtyDialog = new TextInputDialog(String.valueOf(selected.getQuantity()));
+        qtyDialog.setHeaderText("Edit Product Quantity");
+        String qtyStr = qtyDialog.showAndWait().orElse("").trim();
+        if (qtyStr.isEmpty()) return;
+
+        // temp
+        TextInputDialog tempDialog = new TextInputDialog(selected.getTemperature());
+        tempDialog.setHeaderText("Edit Storage Temp");
+        String newTemp = tempDialog.showAndWait().orElse("").trim();
+        if (newTemp.isEmpty()) return;
+
+        // photo url
+        TextInputDialog urlDialog = new TextInputDialog(selected.getPhotoURL());
+        urlDialog.setHeaderText("Edit Photo URL");
+        String newUrl = urlDialog.showAndWait().orElse("").trim();
+
+        float newPrice, newWeight;
+        int newQty;
+
+        try {
+            newPrice = Float.parseFloat(priceStr);
+            newWeight = Float.parseFloat(weightStr);
+            newQty = Integer.parseInt(qtyStr);
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Invalid Input");
+            alert.setContentText("Price, weight and quantity must be numeric.");
+            alert.showAndWait();
+            return;
+        }
+
+        selected.setProductName(newName);
+        selected.setPrice(newPrice);
+        selected.setWeight(newWeight);
+        selected.setQuantity(newQty);
+        selected.setTemperature(newTemp);
+        selected.setPhotoURL(newUrl);
+
+        productTable.refresh();
+    }
+
+    @FXML
+    private void onSearchProduct() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Search Product");
+        dialog.setHeaderText("Enter product name:");
+        dialog.setContentText("Name:");
+        String name = dialog.showAndWait().orElse("").trim();
+        if (name.isEmpty()) return;
+
+        StringBuilder sb = new StringBuilder();
+        boolean found = false;
+
+        for (FloorArea floorArea : supermarket.getFloorAreas()) {
+            for (Aisle aisle : floorArea.getAisles()) {
+                for (Shelf shelf : aisle.getShelves()) {
+                    for (Product product : shelf.getProducts()) {
+
+                        if (product.getProductName().equalsIgnoreCase(name)) {
+                            found = true;
+                            sb.append("====================================\n");
+                            sb.append("Product: ").append(product.getProductName()).append("\n");
+                            sb.append("Floor Area: ").append(floorArea.getFloorAreaName()).append("\n");
+                            sb.append("Aisle: ").append(aisle.getAisleName()).append("\n");
+                            sb.append("Shelf: ").append("Shelf ").append(shelf.getShelfNum()).append("\n");
+                            sb.append("Quantity: ").append(product.getQuantity()).append("\n");
+                            sb.append("Price: ").append(product.getPrice()).append("\n");
+                            sb.append("Weight: ").append(product.getWeight()).append("\n");
+                            sb.append("====================================\n");
+                            sb.append("\n");
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!found) {
+            sb.append("No products found with name: ").append(name);
+        }
+
+        TextArea textArea = new TextArea(sb.toString());
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+
+        Alert resultWindow = new Alert(Alert.AlertType.INFORMATION);
+        resultWindow.setTitle("Search Results");
+        resultWindow.setHeaderText("Matching Products Found:");
+        resultWindow.getDialogPane().setContent(textArea);
+
+        resultWindow.showAndWait();
+    }
+
+    @FXML
+    private void drawFloorAreasMap() {
+        mapPane.getChildren().clear();
+
+        int numFloorAreas = supermarket.getFloorAreas().size();
+
+        double mapWidth = mapPane.getWidth();
+        double mapHeight = mapPane.getHeight();
+
+        double padding = 10;
+        double floorWidth = (mapWidth - (padding * (numFloorAreas + 1))) / numFloorAreas;
+        double floorHeight = mapHeight - 2 * padding;
+
+        int index = 0;
+        for (FloorArea floorArea : supermarket.getFloorAreas()) {
+            double x = padding + index * (floorWidth + padding);
+            double y = padding;
+
+            Rectangle floorRect = new Rectangle(floorWidth, floorHeight);
+            floorRect.setX(x);
+            floorRect.setY(y);
+            floorRect.setFill(Color.LIGHTCORAL);
+
+            mapPane.getChildren().add(floorRect);
+            index++;
+        }
+    }
+
 }
