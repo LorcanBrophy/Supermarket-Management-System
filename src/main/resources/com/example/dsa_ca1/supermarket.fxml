@@ -59,6 +59,7 @@
                         <Button text="Remove" onAction="#onRemoveProduct"/>
                         <Button text="Edit" onAction="#onEditProduct"/>
                         <Button text="Search" onAction="#onSearchProduct"/>
+                        <Button text="Save" onAction="#onSave" />
                     </HBox>
                 </VBox>
             </bottom>

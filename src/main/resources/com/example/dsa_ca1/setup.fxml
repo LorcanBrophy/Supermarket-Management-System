@@ -10,7 +10,7 @@
     </padding>
 
     <Label text="Enter Supermarket Name:" styleClass="setup-text"/>
-    <TextField fx:id="supermarketName" promptText="Supermarket Name"/>
+    <TextField fx:id="supermarketName" promptText="Enter a new or existing supermarket name"/>
 
     <Button text="Create Supermarket" onAction="#onCreateSupermarketButtonPressed"/>
 

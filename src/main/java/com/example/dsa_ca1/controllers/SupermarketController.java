@@ -5,18 +5,15 @@ import com.example.dsa_ca1.models.FloorArea;
 import com.example.dsa_ca1.models.Aisle;
 import com.example.dsa_ca1.models.Shelf;
 import com.example.dsa_ca1.models.Product;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-
-import java.util.Objects;
 
 public class SupermarketController {
     @FXML private AnchorPane mapPane;
@@ -43,6 +40,7 @@ public class SupermarketController {
     @FXML
     public void initialiseSupermarket(Supermarket supermarket) {
         this.supermarket = supermarket;
+
         productNameCol.setCellValueFactory(new PropertyValueFactory<>("productName"));
         productPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
         productWeightCol.setCellValueFactory(new PropertyValueFactory<>("weight"));
@@ -64,7 +62,7 @@ public class SupermarketController {
 
             selectedFloorArea = null;
             for (FloorArea floorArea : supermarket.getFloorAreas()) {
-                String display = floorArea.getFloorAreaName() + " (" + floorArea.getFloorLevel() + ")";
+                String display = floorArea.getFloorAreaName();
                 if (display.equals(newVal)) {
                     selectedFloorArea = floorArea;
                     break;
@@ -85,13 +83,10 @@ public class SupermarketController {
             productTable.getItems().clear();
 
             selectedAisle = null;
-            outerAisle:
-            for (FloorArea floorArea : supermarket.getFloorAreas()) {
-                for (Aisle aisle : floorArea.getAisles()) {
-                    if (aisle.getAisleName().equals(newVal)) {
-                        selectedAisle = aisle;
-                        break outerAisle;
-                    }
+            for (Aisle aisle : selectedFloorArea.getAisles()) {
+                if (aisle.getAisleName().equals(newVal)) {
+                    selectedAisle = aisle;
+                    break;
                 }
             }
 
@@ -103,19 +98,15 @@ public class SupermarketController {
         });
 
         shelfList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            productTable.getItems().clear();
             if (newVal == null) return;
 
+            productTable.getItems().clear();
+
             selectedShelf = null;
-            outerShelf:
-            for (FloorArea floorArea : supermarket.getFloorAreas()) {
-                for (Aisle aisle : floorArea.getAisles()) {
-                    for (Shelf shelf : aisle.getShelves()) {
-                        if (("Shelf " + shelf.getShelfNum()).equals(newVal)) {
-                            selectedShelf = shelf;
-                            break outerShelf;
-                        }
-                    }
+            for (Shelf shelf : selectedAisle.getShelves()) {
+                if (("Shelf " + shelf.getShelfNum()).equals(newVal)) {
+                    selectedShelf = shelf;
+                    break;
                 }
             }
 
@@ -128,13 +119,14 @@ public class SupermarketController {
             }
         });
 
+        Platform.runLater(this::drawFloorAreasMap);
 
     }
 
     @FXML
     private FloorArea findFloorAreaByDisplay(String displayText) {
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
-            String display = floorArea.getFloorAreaName() + " (" + floorArea.getFloorLevel() + ")";
+            String display = floorArea.getFloorAreaName();
             if (display.equals(displayText)) {
                 return floorArea;
             }
@@ -185,11 +177,11 @@ public class SupermarketController {
         if (level.isEmpty()) return;
 
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
-            if (floorArea.getFloorAreaName().equals(name) && floorArea.getFloorLevel().equals(level)) {
+            if (floorArea.getFloorAreaName().equals(name)) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Duplicate Floor Area");
                 alert.setHeaderText(null);
-                alert.setContentText("A Floor Area with that name and level already exists.");
+                alert.setContentText("A Floor Area with that name already exists.");
                 alert.showAndWait();
                 return;
             }
@@ -198,7 +190,7 @@ public class SupermarketController {
         FloorArea newFloorArea = new FloorArea(name, level);
         supermarket.getFloorAreas().add(newFloorArea);
 
-        floorAreaList.getItems().add(name + " (" + level + ")");
+        floorAreaList.getItems().add(name);
 
         drawFloorAreasMap();
 
@@ -464,7 +456,7 @@ public class SupermarketController {
     }
 
     @FXML
-    public void onAddProduct(ActionEvent event) {
+    public void onAddProduct() {
         if (selectedShelf == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No Shelf Selected");
@@ -781,4 +773,11 @@ public class SupermarketController {
         }
     }
 
+    public void onSave() {
+        try {
+            supermarket.save(supermarket.getName());
+        } catch (Exception e) {
+            System.err.println("Error writing to file: " + e);
+        }
+    }
 }

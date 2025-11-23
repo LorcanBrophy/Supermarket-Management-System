@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 
 public class SetupController {
@@ -22,16 +23,35 @@ public class SetupController {
             return;
         }
 
+        Supermarket supermarket;
+
+        File file = new File(name + ".xml");
+
+        if (file.exists()) {
+            try {
+                supermarket = Supermarket.load(name);
+                welcomeText.setText("Loaded existing supermarket: " + name);
+            } catch (Exception e) {
+                welcomeText.setText("Failed to load existing file!");
+                e.printStackTrace();
+                return;
+            }
+        } else {
+            // Create new
+            supermarket = new Supermarket(name);
+            welcomeText.setText("Created new supermarket: " + name);
+        }
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/dsa_ca1/supermarket.fxml"));
-        var newRoot = loader.load();
+        Parent newRoot = loader.load();
 
         SupermarketController controller = loader.getController();
-        controller.initialiseSupermarket(new Supermarket(name));
+        controller.initialiseSupermarket(supermarket);
 
         Stage stage = (Stage) supermarketName.getScene().getWindow();
         Scene scene = stage.getScene();
 
-        scene.setRoot((Parent) newRoot);
+        scene.setRoot(newRoot);
 
         stage.setTitle(name + " Supermarket");
     }
