@@ -145,3 +145,46 @@
 
 
 
+
+
+.floor-area {
+    -fx-fill: #303030;
+    -fx-stroke: #575757;
+    -fx-stroke-width: 2;
+    -fx-arc-width: 8;
+    -fx-arc-height: 8;
+}
+
+.floor-area:hover {
+    -fx-fill: #4c4c4c;
+    -fx-cursor: hand;
+    -fx-stroke: #ffffff66;
+}
+
+.aisle {
+    -fx-fill: #454545;
+    -fx-stroke: #717171;
+    -fx-stroke-width: 2;
+    -fx-arc-width: 8;
+    -fx-arc-height: 8;
+}
+
+.aisle:hover {
+    -fx-fill: #686767;
+    -fx-cursor: hand;
+    -fx-stroke: #ffffff66;
+}
+
+.shelf {
+    -fx-fill: #8c8c8c;
+    -fx-stroke: #717171;
+    -fx-stroke-width: 2;
+    -fx-arc-width: 8;
+    -fx-arc-height: 8;
+}
+
+.shelf:hover {
+    -fx-fill: #9e9e9e;
+    -fx-cursor: hand;
+    -fx-stroke: #ffffff66;
+}

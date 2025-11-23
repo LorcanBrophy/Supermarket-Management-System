@@ -68,7 +68,7 @@
 
     <Tab text="Map" closable="false">
         <AnchorPane fx:id="mapPane">
-            <Label text="rasclaat map view sooon my drilla" layoutX="20" layoutY="20"/>
+            <Label text="Add a floor area to generate map" layoutX="20" layoutY="20"/>
         </AnchorPane>
     </Tab>
 

@@ -224,6 +224,8 @@ public class SupermarketController {
         aisleList.getItems().clear();
         shelfList.getItems().clear();
         productTable.getItems().clear();
+
+        drawFloorAreasMap();
     }
 
     @FXML
@@ -255,6 +257,8 @@ public class SupermarketController {
 
         int index = floorAreaList.getSelectionModel().getSelectedIndex();
         floorAreaList.getItems().set(index, newName + " (" + newLevel + ")");
+
+        drawFloorAreasMap();
     }
 
     @FXML
@@ -335,6 +339,8 @@ public class SupermarketController {
                 System.out.println(aisle.toString());
             }
         }
+
+        drawFloorAreasMap();
     }
 
     @FXML
@@ -352,6 +358,8 @@ public class SupermarketController {
 
         shelfList.getItems().clear();
         productTable.getItems().clear();
+
+        drawFloorAreasMap();
     }
 
     @FXML
@@ -414,6 +422,8 @@ public class SupermarketController {
 
         int index = aisleList.getSelectionModel().getSelectedIndex();
         aisleList.getItems().set(index, newName);
+
+        drawFloorAreasMap();
     }
 
     @FXML
@@ -433,6 +443,7 @@ public class SupermarketController {
         selectedAisle.addShelf(newShelf);
 
         shelfList.getItems().add("Shelf " + shelfNum);
+        drawFloorAreasMap();
     }
 
     @FXML
@@ -449,6 +460,7 @@ public class SupermarketController {
         shelfList.getItems().remove(selectedText);
 
         productTable.getItems().clear();
+        drawFloorAreasMap();
     }
 
     @FXML
@@ -662,25 +674,109 @@ public class SupermarketController {
         mapPane.getChildren().clear();
 
         int numFloorAreas = supermarket.getFloorAreas().size();
+        if (numFloorAreas == 0) return;
 
         double mapWidth = mapPane.getWidth();
         double mapHeight = mapPane.getHeight();
 
-        double padding = 10;
-        double floorWidth = (mapWidth - (padding * (numFloorAreas + 1))) / numFloorAreas;
+        double padding = 30;
+        double floorWidth = (mapWidth - (padding * (numFloorAreas + 1))) / numFloorAreas; // find usable width (width - padding) and div by total areas
         double floorHeight = mapHeight - 2 * padding;
 
         int index = 0;
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
             double x = padding + index * (floorWidth + padding);
-            double y = padding;
 
-            Rectangle floorRect = new Rectangle(floorWidth, floorHeight);
-            floorRect.setX(x);
-            floorRect.setY(y);
-            floorRect.setFill(Color.LIGHTCORAL);
+            Rectangle rect = new Rectangle(floorWidth, floorHeight);
+            rect.setX(x);
+            rect.setY(padding);
+            rect.getStyleClass().add("floor-area");
+            mapPane.getChildren().add(rect);
 
-            mapPane.getChildren().add(floorRect);
+            Label label = new Label(floorArea.getFloorAreaName());
+            label.setLayoutX(x + padding);
+            label.setLayoutY(padding + 5);
+            label.setTextFill(Color.WHITE);
+            label.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+            mapPane.getChildren().add(label);
+
+            drawAisles(floorArea, rect);
+            index++;
+        }
+    }
+
+    @FXML
+    private void drawAisles(FloorArea floorArea, Rectangle floorRect) {
+        double xStart = floorRect.getX();
+        double yStart = floorRect.getY();
+        double width = floorRect.getWidth();
+        double height = floorRect.getHeight();
+
+        int numAisles = floorArea.getAisles().size();
+        if (numAisles == 0) return;
+
+        double padding = 30;
+        double aisleHeight = (height - (padding * (numAisles + 1))) / numAisles;
+        double aisleWidth = width - 2 * padding;
+
+        int index = 0;
+        for (Aisle aisle : floorArea.getAisles()) {
+
+            double ax = xStart + padding;
+            double ay = yStart + padding + index * (aisleHeight + padding);
+
+            Rectangle rect = new Rectangle(aisleWidth, aisleHeight);
+            rect.setX(ax);
+            rect.setY(ay);
+
+            rect.getStyleClass().add("aisle");
+
+            mapPane.getChildren().add(rect);
+
+            Label aisleLabel = new Label(aisle.getAisleName());
+            aisleLabel.setLayoutX(ax + padding);
+            aisleLabel.setLayoutY(ay + 5);
+            aisleLabel.setTextFill(Color.WHITE);
+            aisleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
+            mapPane.getChildren().add(aisleLabel);
+
+            drawShelves(aisle, rect);
+            index++;
+        }
+    }
+
+    private void drawShelves(Aisle aisle, Rectangle aisleRect) {
+        double xStart = aisleRect.getX();
+        double yStart = aisleRect.getY();
+        double width = aisleRect.getWidth();
+        double height = aisleRect.getHeight();
+
+        int numShelves = aisle.getShelves().size();
+        if (numShelves == 0) return;
+
+        double padding = 30;
+        double shelfHeight = (height - (padding * (numShelves + 1))) / numShelves;
+        double shelfWidth = width - 2 * padding;
+
+        int index = 0;
+        for (Shelf shelf : aisle.getShelves()) {
+            double sx = xStart + padding;
+            double sy = yStart + padding + index * (shelfHeight + padding);
+
+            Rectangle rect = new Rectangle(shelfWidth, shelfHeight);
+            rect.setX(sx);
+            rect.setY(sy);
+
+            rect.getStyleClass().add("shelf");
+
+            mapPane.getChildren().add(rect);
+
+            Label shelfLabel = new Label("Shelf " + shelf.getShelfNum());
+            shelfLabel.setLayoutX(sx + 5);
+            shelfLabel.setLayoutY(sy + 5);
+            shelfLabel.setTextFill(Color.WHITE);
+            shelfLabel.setStyle("-fx-font-size: 10; -fx-font-weight: bold;");
+            mapPane.getChildren().add(shelfLabel);
             index++;
         }
     }
