@@ -7,11 +7,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 
 public class Supermarket {
     // fields
-    private String name = "";
+    private String name;
     private CustomLinkedList<FloorArea> floorAreas = new CustomLinkedList<>();
 
     // constructor
@@ -50,7 +49,6 @@ public class Supermarket {
         out.writeObject(this);
         out.close();
     }
-
     public static Supermarket load(String fileName) throws Exception {
         Class<?>[] classes = new Class[] {
                 Supermarket.class,

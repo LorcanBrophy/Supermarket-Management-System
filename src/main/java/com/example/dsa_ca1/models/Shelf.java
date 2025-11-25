@@ -12,7 +12,6 @@ public class Shelf {
     public int getShelfNum() {
         return shelfNum;
     }
-
     public void setShelfNum(int shelfNum) {
         this.shelfNum = shelfNum;
     }
@@ -20,7 +19,6 @@ public class Shelf {
     public CustomLinkedList<Product> getProducts() {
         return products;
     }
-
     public void setProducts(CustomLinkedList<Product> products) {
         this.products = products;
     }
@@ -28,7 +26,6 @@ public class Shelf {
     public void addProduct(Product p) {
         products.add(p);
     }
-
     public void removeProduct(Product p) {
         products.removeValue(p);
     }
