@@ -2,8 +2,8 @@ package com.example.dsa_ca1.models;
 
 public class FloorArea {
     // fields
-    private String floorAreaName = "";
-    private String floorLevel = "";
+    private String floorAreaName;
+    private String floorLevel;
 
     private CustomLinkedList<Aisle> aisles = new CustomLinkedList<>();
 
@@ -43,9 +43,17 @@ public class FloorArea {
         aisles.removeValue(a);
     }
 
+    public float totalValue() {
+        float total = 0;
+        for (Aisle aisle : aisles) {
+            total += aisle.totalValue();
+        }
+        return total;
+    }
+
     @Override
     public String toString() {
-        return "FloorArea: " + floorAreaName + " (" + floorLevel + ")" +
-                "\nAisles: " + aisles.size();
+        return "FloorArea: " + floorAreaName +
+                " (" + floorLevel + ") | Total Aisles: " + aisles.size();
     }
 }

@@ -53,14 +53,24 @@ public class Aisle {
     public void addShelf(Shelf s) {
         shelves.add(s);
     }
-
     public void removeShelf(Shelf s) {
         shelves.removeValue(s);
     }
 
+    public float totalValue() {
+        float total = 0;
+        for (Shelf shelf : shelves) {
+            total += shelf.totalValue();
+        }
+        return total;
+    }
+
     @Override
     public String toString() {
-        return "Aisle: " + aisleName + " (W: " + aisleWidth + ",  H: " + aisleHeight + ",  Temp: " + aisleTemperature + ")" +
-                "\nShelves: " + shelves.size();
+        return "Aisle: " + aisleName +
+                " | W: " + aisleWidth +
+                "  H: " + aisleHeight +
+                "  Temp: " + aisleTemperature +
+                " | Total Shelves: " + shelves.size();
     }
 }

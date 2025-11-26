@@ -12,24 +12,43 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SupermarketController {
-    @FXML private AnchorPane mapPane;
-    @FXML private TableView<Product> productTable;
+    @FXML
+    public Pane floorMapPane;
+    @FXML
+    private ComboBox<String> floorSelectComboBox;
+    @FXML
+    private AnchorPane mapPane;
+    @FXML
+    private TableView<Product> productTable;
 
-    @FXML private TableColumn<Product, String> productNameCol;
-    @FXML private TableColumn<Product, Float> productPriceCol;
-    @FXML private TableColumn<Product, Float> productWeightCol;
-    @FXML private TableColumn<Product, Integer> productQuantityCol;
-    @FXML private TableColumn<Product, String> productTempCol;
-    @FXML private TableColumn<Product, String> photoUrl;
+    @FXML
+    private TableColumn<Product, String> productNameCol;
+    @FXML
+    private TableColumn<Product, Float> productPriceCol;
+    @FXML
+    private TableColumn<Product, Float> productWeightCol;
+    @FXML
+    private TableColumn<Product, Integer> productQuantityCol;
+    @FXML
+    private TableColumn<Product, String> productTempCol;
+    @FXML
+    private TableColumn<Product, String> photoUrl;
 
 
-    @FXML private ListView<String> floorAreaList;
-    @FXML private ListView<String> aisleList;
-    @FXML private ListView<String> shelfList;
+    @FXML
+    private ListView<String> floorAreaListView;
+    @FXML
+    private ListView<String> aisleListView;
+    @FXML
+    private ListView<String> shelfListView;
 
     private FloorArea selectedFloorArea;
     private Aisle selectedAisle;
@@ -41,26 +60,23 @@ public class SupermarketController {
     public void initialiseSupermarket(Supermarket supermarket) {
         this.supermarket = supermarket;
 
-        productNameCol.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        productPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-        productWeightCol.setCellValueFactory(new PropertyValueFactory<>("weight"));
-        productQuantityCol.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        productTempCol.setCellValueFactory(new PropertyValueFactory<>("temperature"));
-        photoUrl.setCellValueFactory(new PropertyValueFactory<>("photoURL"));
-
-        floorAreaList.getItems().clear();
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
-            floorAreaList.getItems().add(floorArea.getFloorAreaName());
+            floorAreaListView.getItems().add(floorArea.getFloorAreaName());
         }
 
-        floorAreaList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+        floorAreaListView.getSelectionModel().selectedItemProperty().addListener((_, _, newVal) -> {
+            // ignore if nothing was selected
             if (newVal == null) return;
 
-            aisleList.getItems().clear();
-            shelfList.getItems().clear();
+            // clear anything previously shown for another floor area
+            aisleListView.getItems().clear();
+            shelfListView.getItems().clear();
             productTable.getItems().clear();
 
+            // reset the selected floor area reference
             selectedFloorArea = null;
+
+            // find the actual floorArea object that matches the clicked name
             for (FloorArea floorArea : supermarket.getFloorAreas()) {
                 String display = floorArea.getFloorAreaName();
                 if (display.equals(newVal)) {
@@ -69,17 +85,18 @@ public class SupermarketController {
                 }
             }
 
+            // if a floor area was found, populate its aisles in the list
             if (selectedFloorArea != null) {
                 for (Aisle aisle : selectedFloorArea.getAisles()) {
-                    aisleList.getItems().add(aisle.getAisleName());
+                    aisleListView.getItems().add(aisle.getAisleName());
                 }
             }
         });
 
-        aisleList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+        aisleListView.getSelectionModel().selectedItemProperty().addListener((_, _, newVal) -> {
             if (newVal == null) return;
 
-            shelfList.getItems().clear();
+            shelfListView.getItems().clear();
             productTable.getItems().clear();
 
             selectedAisle = null;
@@ -92,19 +109,19 @@ public class SupermarketController {
 
             if (selectedAisle != null) {
                 for (Shelf shelf : selectedAisle.getShelves()) {
-                    shelfList.getItems().add("Shelf " + shelf.getShelfNum());
+                    shelfListView.getItems().add(selectedAisle.getAisleName() + " | Shelf " + shelf.getShelfNum());
                 }
             }
         });
 
-        shelfList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+        shelfListView.getSelectionModel().selectedItemProperty().addListener((_, _, newVal) -> {
             if (newVal == null) return;
 
             productTable.getItems().clear();
 
             selectedShelf = null;
             for (Shelf shelf : selectedAisle.getShelves()) {
-                if (("Shelf " + shelf.getShelfNum()).equals(newVal)) {
+                if ((selectedAisle.getAisleName() + " | Shelf " + shelf.getShelfNum()).equals(newVal)) {
                     selectedShelf = shelf;
                     break;
                 }
@@ -119,7 +136,25 @@ public class SupermarketController {
             }
         });
 
+        productNameCol.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        productPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+        productWeightCol.setCellValueFactory(new PropertyValueFactory<>("weight"));
+        productQuantityCol.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        productTempCol.setCellValueFactory(new PropertyValueFactory<>("temperature"));
+        photoUrl.setCellValueFactory(new PropertyValueFactory<>("photoURL"));
+
         Platform.runLater(this::drawFloorAreasMap);
+
+        floorSelectComboBox.getItems().clear();
+        for (int i = 0; i < supermarket.getNumFloors(); i++) {
+            floorSelectComboBox.getItems().add("Floor " + (i + 1));
+        }
+
+        if (!floorSelectComboBox.getItems().isEmpty()) {
+            floorSelectComboBox.getSelectionModel().selectFirst();
+        }
+
+        floorSelectComboBox.setOnAction(_ -> drawFloorAreasMap());
 
     }
 
@@ -151,7 +186,7 @@ public class SupermarketController {
         if (selectedAisle == null) return null;
 
         for (Shelf shelf : selectedAisle.getShelves()) {
-            if (("Shelf " + shelf.getShelfNum()).equals(displayText)) {
+            if ((selectedAisle.getAisleName() + " | Shelf " + shelf.getShelfNum()).equals(displayText)) {
                 return shelf;
             }
         }
@@ -169,12 +204,18 @@ public class SupermarketController {
         if (name.isEmpty()) return;
 
         // level
-        TextInputDialog levelDialog = new TextInputDialog();
+        String[] levels = new String[supermarket.getNumFloors()];
+        for (int i = 0; i < supermarket.getNumFloors(); i++) {
+            levels[i] = "Floor " + (i + 1);
+        }
+
+        ChoiceDialog<String> levelDialog = new ChoiceDialog<>(levels[0], levels);
         levelDialog.setTitle("Add Floor Area");
-        levelDialog.setHeaderText("Set Floor Level");
-        levelDialog.setContentText("Level (e.g. Ground, First):");
-        String level = levelDialog.showAndWait().orElse("").trim();
-        if (level.isEmpty()) return;
+        levelDialog.setHeaderText("Select Floor Level");
+        levelDialog.setContentText("Choose:");
+
+        String level = levelDialog.showAndWait().orElse(null);
+        if (level == null) return;
 
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
             if (floorArea.getFloorAreaName().equals(name)) {
@@ -190,19 +231,15 @@ public class SupermarketController {
         FloorArea newFloorArea = new FloorArea(name, level);
         supermarket.getFloorAreas().add(newFloorArea);
 
-        floorAreaList.getItems().add(name);
+        floorAreaListView.getItems().add(name);
 
+        printLinkedList();
         drawFloorAreasMap();
-
-        System.out.println("Linked List:");
-        for (FloorArea floorArea : supermarket.getFloorAreas()) {
-            System.out.println(floorArea.toString());
-        }
     }
 
     @FXML
     private void onRemoveFloorArea() {
-        String selectedText = floorAreaList.getSelectionModel().getSelectedItem();
+        String selectedText = floorAreaListView.getSelectionModel().getSelectedItem();
         if (selectedText == null) return;
 
         FloorArea toRemove = findFloorAreaByDisplay(selectedText);
@@ -211,10 +248,10 @@ public class SupermarketController {
         selectedFloorArea = null;
 
         supermarket.getFloorAreas().removeValue(toRemove);
-        floorAreaList.getItems().remove(selectedText);
+        floorAreaListView.getItems().remove(selectedText);
 
-        aisleList.getItems().clear();
-        shelfList.getItems().clear();
+        aisleListView.getItems().clear();
+        shelfListView.getItems().clear();
         productTable.getItems().clear();
 
         drawFloorAreasMap();
@@ -222,7 +259,7 @@ public class SupermarketController {
 
     @FXML
     private void onEditFloorArea() {
-        String selectedText = floorAreaList.getSelectionModel().getSelectedItem();
+        String selectedText = floorAreaListView.getSelectionModel().getSelectedItem();
         if (selectedText == null) return;
 
         FloorArea toEdit = findFloorAreaByDisplay(selectedText);
@@ -247,8 +284,8 @@ public class SupermarketController {
         toEdit.setFloorAreaName(newName);
         toEdit.setFloorLevel(newLevel);
 
-        int index = floorAreaList.getSelectionModel().getSelectedIndex();
-        floorAreaList.getItems().set(index, newName + " (" + newLevel + ")");
+        int index = floorAreaListView.getSelectionModel().getSelectedIndex();
+        floorAreaListView.getItems().set(index, newName + " (" + newLevel + ")");
 
         drawFloorAreasMap();
     }
@@ -287,7 +324,7 @@ public class SupermarketController {
         TextInputDialog widthDialog = new TextInputDialog();
         widthDialog.setTitle("Add Aisle");
         widthDialog.setHeaderText("Set Aisle Width");
-        widthDialog.setContentText("Width (number):");
+        widthDialog.setContentText("Width (m):");
         String widthStr = widthDialog.showAndWait().orElse("").trim();
         if (widthStr.isEmpty()) return;
 
@@ -295,17 +332,20 @@ public class SupermarketController {
         TextInputDialog heightDialog = new TextInputDialog();
         heightDialog.setTitle("Add Aisle");
         heightDialog.setHeaderText("Set Aisle Height");
-        heightDialog.setContentText("Height (number):");
+        heightDialog.setContentText("Height (m):");
         String heightStr = heightDialog.showAndWait().orElse("").trim();
         if (heightStr.isEmpty()) return;
 
         // temp
-        TextInputDialog tempDialog = new TextInputDialog();
+        String[] temps = {"Room", "Refrigerated", "Frozen"};
+        ChoiceDialog<String> tempDialog = new ChoiceDialog<>(temps[0], temps);
         tempDialog.setTitle("Add Aisle");
         tempDialog.setHeaderText("Set Aisle Temperature");
-        tempDialog.setContentText("Temp (e.g. Room, Frozen):");
-        String temp = tempDialog.showAndWait().orElse("").trim();
-        if (temp.isEmpty()) return;
+        tempDialog.setContentText("Temp:");
+
+        String temp;
+        temp = tempDialog.showAndWait().orElse(null);
+        if (temp == null || temp.isEmpty()) return;
 
         int width, height;
         try {
@@ -323,21 +363,18 @@ public class SupermarketController {
         Aisle newAisle = new Aisle(name, width, height, temp);
         selectedFloorArea.addAisle(newAisle);
 
-        aisleList.getItems().add(name);
-
-        for (FloorArea floorArea : supermarket.getFloorAreas()) {
-            System.out.println(floorArea.toString());
-            for (Aisle aisle : floorArea.getAisles()) {
-                System.out.println(aisle.toString());
-            }
+        for (Aisle aisle : selectedFloorArea.getAisles()) {
+            System.out.println(aisle.toString());
         }
+
+        aisleListView.getItems().add(name);
 
         drawFloorAreasMap();
     }
 
     @FXML
     public void onRemoveAisle() {
-        String selectedText = aisleList.getSelectionModel().getSelectedItem();
+        String selectedText = aisleListView.getSelectionModel().getSelectedItem();
         if (selectedText == null) return;
 
         Aisle toRemove = findAisleByDisplay(selectedText);
@@ -346,9 +383,9 @@ public class SupermarketController {
         selectedAisle = null;
 
         selectedFloorArea.getAisles().removeValue(toRemove);
-        aisleList.getItems().remove(selectedText);
+        aisleListView.getItems().remove(selectedText);
 
-        shelfList.getItems().clear();
+        shelfListView.getItems().clear();
         productTable.getItems().clear();
 
         drawFloorAreasMap();
@@ -356,7 +393,7 @@ public class SupermarketController {
 
     @FXML
     public void onEditAisle() {
-        String selectedText = aisleList.getSelectionModel().getSelectedItem();
+        String selectedText = aisleListView.getSelectionModel().getSelectedItem();
         if (selectedText == null) return;
 
         Aisle toEdit = findAisleByDisplay(selectedText);
@@ -374,7 +411,7 @@ public class SupermarketController {
         TextInputDialog widthDialog = new TextInputDialog();
         widthDialog.setTitle("Add Aisle");
         widthDialog.setHeaderText("Set Aisle Width");
-        widthDialog.setContentText("Width (number):");
+        widthDialog.setContentText("Width (m):");
         String widthStr = widthDialog.showAndWait().orElse("").trim();
         if (widthStr.isEmpty()) return;
 
@@ -382,17 +419,20 @@ public class SupermarketController {
         TextInputDialog heightDialog = new TextInputDialog();
         heightDialog.setTitle("Add Aisle");
         heightDialog.setHeaderText("Set Aisle Height");
-        heightDialog.setContentText("Height (number):");
+        heightDialog.setContentText("Height (m):");
         String heightStr = heightDialog.showAndWait().orElse("").trim();
         if (heightStr.isEmpty()) return;
 
         // temp
-        TextInputDialog tempDialog = new TextInputDialog();
+        String[] temps = {"Room", "Refrigerated", "Frozen"};
+        ChoiceDialog<String> tempDialog = new ChoiceDialog<>(temps[0], temps);
         tempDialog.setTitle("Add Aisle");
         tempDialog.setHeaderText("Set Aisle Temperature");
-        tempDialog.setContentText("Temp (e.g. Room, Frozen):");
-        String newTemp = tempDialog.showAndWait().orElse("").trim();
-        if (newTemp.isEmpty()) return;
+        tempDialog.setContentText("Temp:");
+
+        String newTemp;
+        newTemp = tempDialog.showAndWait().orElse(null);
+        if (newTemp == null || newTemp.isEmpty()) return;
 
         int newWidth, newHeight;
         try {
@@ -412,8 +452,8 @@ public class SupermarketController {
         toEdit.setAisleHeight(newHeight);
         toEdit.setAisleTemperature(newTemp);
 
-        int index = aisleList.getSelectionModel().getSelectedIndex();
-        aisleList.getItems().set(index, newName);
+        int index = aisleListView.getSelectionModel().getSelectedIndex();
+        aisleListView.getItems().set(index, newName);
 
         drawFloorAreasMap();
     }
@@ -434,13 +474,13 @@ public class SupermarketController {
         Shelf newShelf = new Shelf(shelfNum);
         selectedAisle.addShelf(newShelf);
 
-        shelfList.getItems().add("Shelf " + shelfNum);
+        shelfListView.getItems().add(selectedAisle.getAisleName() + " | Shelf " + shelfNum);
         drawFloorAreasMap();
     }
 
     @FXML
     public void onRemoveShelf() {
-        String selectedText = shelfList.getSelectionModel().getSelectedItem();
+        String selectedText = shelfListView.getSelectionModel().getSelectedItem();
         if (selectedText == null) return;
 
         Shelf toRemove = findShelfByDisplay(selectedText);
@@ -449,7 +489,7 @@ public class SupermarketController {
         selectedShelf = null;
 
         selectedAisle.getShelves().removeValue(toRemove);
-        shelfList.getItems().remove(selectedText);
+        shelfListView.getItems().remove(selectedText);
 
         productTable.getItems().clear();
         drawFloorAreasMap();
@@ -478,7 +518,7 @@ public class SupermarketController {
         TextInputDialog priceDialog = new TextInputDialog();
         priceDialog.setTitle("Add Product");
         priceDialog.setHeaderText("Set Product Price");
-        priceDialog.setContentText("Price:");
+        priceDialog.setContentText("Price (€):");
         String priceStr = priceDialog.showAndWait().orElse("").trim();
         if (priceStr.isEmpty()) return;
 
@@ -486,7 +526,7 @@ public class SupermarketController {
         TextInputDialog weightDialog = new TextInputDialog();
         weightDialog.setTitle("Add Product");
         weightDialog.setHeaderText("Set Product Weight");
-        weightDialog.setContentText("Weight:");
+        weightDialog.setContentText("Weight (g):");
         String weightStr = weightDialog.showAndWait().orElse("").trim();
         if (weightStr.isEmpty()) return;
 
@@ -499,12 +539,7 @@ public class SupermarketController {
         if (quantityStr.isEmpty()) return;
 
         // temp
-        TextInputDialog tempDialog = new TextInputDialog();
-        tempDialog.setTitle("Add Product");
-        tempDialog.setHeaderText("Set Product Temperature");
-        tempDialog.setContentText("Temp (e.g. Room, Frozen):");
-        String temp = tempDialog.showAndWait().orElse("").trim();
-        if (temp.isEmpty()) return;
+        String temp = selectedAisle.getAisleTemperature();
 
         // photo url
         TextInputDialog photoDialog = new TextInputDialog();
@@ -524,10 +559,29 @@ public class SupermarketController {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Input");
             alert.setHeaderText(null);
-            alert.setContentText("Price, weight, and quantity must be valid numbers.");
+            alert.setContentText("Price, weight, and quantity must be valid  numbers.");
             alert.showAndWait();
             return;
         }
+
+        Product matchingProduct = null;
+        for (Product product : selectedShelf.getProducts()) {
+            if (product.getProductName().equals(name) && product.getWeight() == weight) {
+                matchingProduct = product;
+                break;
+            }
+        }
+
+        if (matchingProduct != null) {
+            matchingProduct.setQuantity(matchingProduct.getQuantity() + quantity);
+
+            matchingProduct.setPrice(price);
+            matchingProduct.setPhotoURL(photoUrl);
+
+            productTable.refresh();
+            return;
+        }
+
 
         Product newProduct = new Product(name, price, weight, quantity, temp, photoUrl);
 
@@ -541,8 +595,35 @@ public class SupermarketController {
         Product selected = productTable.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
-        selectedShelf.removeProduct(selected);
-        productTable.getItems().remove(selected);
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Remove Quantity");
+        dialog.setHeaderText("Removing from: " + selected.getProductName());
+        dialog.setContentText("Enter quantity to remove (Total " + selected.getQuantity() + "):");
+
+        String result = dialog.showAndWait().orElse(null);
+        if (result == null) return;
+
+        int amount;
+        try {
+            amount = Integer.parseInt(result);
+            if (amount < 1) return;
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Input");
+            alert.setHeaderText(null);
+            alert.setContentText("Invalid input for removal.");
+            alert.showAndWait();
+            return;
+        }
+
+        if (amount >= selected.getQuantity()) {
+            selectedShelf.removeProduct(selected);
+            productTable.getItems().remove(selected);
+        } else {
+            selected.setQuantity(selected.getQuantity() - amount);
+        }
+
+        productTable.refresh();
     }
 
     @FXML
@@ -558,13 +639,13 @@ public class SupermarketController {
 
         // price
         TextInputDialog priceDialog = new TextInputDialog(String.valueOf(selected.getPrice()));
-        priceDialog.setHeaderText("Edit Product Price");
+        priceDialog.setHeaderText("Edit Product Price (€)");
         String priceStr = priceDialog.showAndWait().orElse("").trim();
         if (priceStr.isEmpty()) return;
 
         // weight
         TextInputDialog weightDialog = new TextInputDialog(String.valueOf(selected.getWeight()));
-        weightDialog.setHeaderText("Edit Product Weight");
+        weightDialog.setHeaderText("Edit Product Weight (g)");
         String weightStr = weightDialog.showAndWait().orElse("").trim();
         if (weightStr.isEmpty()) return;
 
@@ -633,7 +714,7 @@ public class SupermarketController {
                             sb.append("Product: ").append(product.getProductName()).append("\n");
                             sb.append("Floor Area: ").append(floorArea.getFloorAreaName()).append("\n");
                             sb.append("Aisle: ").append(aisle.getAisleName()).append("\n");
-                            sb.append("Shelf: ").append("Shelf ").append(shelf.getShelfNum()).append("\n");
+                            sb.append("Shelf: ").append(selectedAisle.getAisleName()).append(" | Shelf ").append(shelf.getShelfNum()).append("\n");
                             sb.append("Quantity: ").append(product.getQuantity()).append("\n");
                             sb.append("Price: ").append(product.getPrice()).append("\n");
                             sb.append("Weight: ").append(product.getWeight()).append("\n");
@@ -663,34 +744,43 @@ public class SupermarketController {
 
     @FXML
     private void drawFloorAreasMap() {
-        mapPane.getChildren().clear();
+        floorMapPane.getChildren().clear();
 
-        int numFloorAreas = supermarket.getFloorAreas().size();
+        String selectedFloor = floorSelectComboBox.getValue();
+        if (selectedFloor == null) return;
+
+        List<FloorArea> filteredFloorAreas = new ArrayList<>();
+        for (FloorArea floorArea : supermarket.getFloorAreas()) {
+            if (floorArea.getFloorLevel().equals(selectedFloor)) {
+                filteredFloorAreas.add(floorArea);
+            }
+        }
+
+        int numFloorAreas = filteredFloorAreas.size();
         if (numFloorAreas == 0) return;
 
-        double mapWidth = mapPane.getWidth();
-        double mapHeight = mapPane.getHeight();
-
+        double mapWidth = floorMapPane.getWidth();
+        double mapHeight = floorMapPane.getHeight();
         double padding = 30;
-        double floorWidth = (mapWidth - (padding * (numFloorAreas + 1))) / numFloorAreas; // find usable width (width - padding) and div by total areas
+        double floorWidth = (mapWidth - (padding * (numFloorAreas + 1))) / numFloorAreas;
         double floorHeight = mapHeight - 2 * padding;
 
         int index = 0;
-        for (FloorArea floorArea : supermarket.getFloorAreas()) {
+        for (FloorArea floorArea : filteredFloorAreas) {
             double x = padding + index * (floorWidth + padding);
 
             Rectangle rect = new Rectangle(floorWidth, floorHeight);
             rect.setX(x);
             rect.setY(padding);
             rect.getStyleClass().add("floor-area");
-            mapPane.getChildren().add(rect);
+            floorMapPane.getChildren().add(rect);
 
             Label label = new Label(floorArea.getFloorAreaName());
-            label.setLayoutX(x + padding);
+            label.setLayoutX(x + 5);
             label.setLayoutY(padding + 5);
             label.setTextFill(Color.WHITE);
             label.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
-            mapPane.getChildren().add(label);
+            floorMapPane.getChildren().add(label);
 
             drawAisles(floorArea, rect);
             index++;
@@ -723,20 +813,21 @@ public class SupermarketController {
 
             rect.getStyleClass().add("aisle");
 
-            mapPane.getChildren().add(rect);
+            floorMapPane.getChildren().add(rect);
 
             Label aisleLabel = new Label(aisle.getAisleName());
             aisleLabel.setLayoutX(ax + padding);
             aisleLabel.setLayoutY(ay + 5);
             aisleLabel.setTextFill(Color.WHITE);
             aisleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
-            mapPane.getChildren().add(aisleLabel);
+            floorMapPane.getChildren().add(aisleLabel);
 
             drawShelves(aisle, rect);
             index++;
         }
     }
 
+    @FXML
     private void drawShelves(Aisle aisle, Rectangle aisleRect) {
         double xStart = aisleRect.getX();
         double yStart = aisleRect.getY();
@@ -761,23 +852,94 @@ public class SupermarketController {
 
             rect.getStyleClass().add("shelf");
 
-            mapPane.getChildren().add(rect);
+            floorMapPane.getChildren().add(rect);
 
-            Label shelfLabel = new Label("Shelf " + shelf.getShelfNum());
+            Label shelfLabel = new Label(aisle.getAisleName() + " | Shelf " + shelf.getShelfNum());
             shelfLabel.setLayoutX(sx + 5);
             shelfLabel.setLayoutY(sy + 5);
             shelfLabel.setTextFill(Color.WHITE);
             shelfLabel.setStyle("-fx-font-size: 10; -fx-font-weight: bold;");
-            mapPane.getChildren().add(shelfLabel);
+            floorMapPane.getChildren().add(shelfLabel);
             index++;
         }
     }
 
+    @FXML
     public void onSave() {
         try {
             supermarket.save(supermarket.getName());
         } catch (Exception e) {
             System.err.println("Error writing to file: " + e);
         }
+    }
+
+    @FXML
+    public void onReset() {
+        supermarket.getFloorAreas().clear();
+
+        floorAreaListView.getItems().clear();
+        aisleListView.getItems().clear();
+        shelfListView.getItems().clear();
+        productTable.getItems().clear();
+
+        selectedFloorArea = null;
+        selectedAisle = null;
+        selectedShelf = null;
+
+        drawFloorAreasMap();
+    }
+
+    private String printLinkedList() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("======== SUPERMARKET========\n");
+
+        sb.append("\n").append(supermarket.toString()).append("\n");
+        sb.append(String.format("Total Value: €%.2f\n", supermarket.totalValue()));
+
+        for (FloorArea floorArea : supermarket.getFloorAreas()) {
+
+            sb.append("\n========================================\n");
+            sb.append(floorArea).append("\n");
+            sb.append(String.format("Total Value: €%.2f\n", floorArea.totalValue()));
+            sb.append("========================================\n");
+
+            for (Aisle aisle : floorArea.getAisles()) {
+
+                sb.append("\n--------------------------------------\n");
+                sb.append(aisle).append("\n");
+                sb.append(String.format("Total Value: €%.2f\n", aisle.totalValue()));
+                sb.append("--------------------------------------\n");
+
+                for (Shelf shelf : aisle.getShelves()) {
+                    sb.append(shelf).append("\n");
+                    sb.append(String.format("Total Value: €%.2f\n", shelf.totalValue()));
+
+                    sb.append("\n").append(shelf.getProducts().display()).append("\n");
+                }
+            }
+        }
+
+        sb.append("\n============================\n");
+
+        return sb.toString();
+    }
+
+    @FXML
+    public void onViewAll() {
+        TextArea textArea = new TextArea(printLinkedList());
+        textArea.setWrapText(false);
+
+        Alert resultWindow = new Alert(Alert.AlertType.INFORMATION);
+        resultWindow.setTitle("All Stock");
+        resultWindow.setHeaderText("Overview of All Stock");
+
+
+        resultWindow.getDialogPane().setMinWidth(900);
+        resultWindow.getDialogPane().setMinHeight(600);
+
+        resultWindow.getDialogPane().setContent(textArea);
+
+        resultWindow.showAndWait();
     }
 }

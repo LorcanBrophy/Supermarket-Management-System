@@ -9,10 +9,13 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
 
-    <Label text="Enter Supermarket Name:" styleClass="setup-text"/>
+    <Label text="Enter Supermarket Name:"/>
     <TextField fx:id="supermarketName" promptText="Enter a new or existing supermarket name"/>
 
-    <Button text="Create Supermarket" onAction="#onCreateSupermarketButtonPressed"/>
+    <Label text="Number of Floors:" />
+    <Spinner fx:id="numFloors"/>
+
+    <Button text="Create/Login" onAction="#onCreateSupermarketButtonPressed"/>
 
     <Label fx:id="welcomeText"/>
 </VBox>

@@ -95,6 +95,17 @@ public class CustomLinkedList<T> implements Iterable<T> {
         size--;
     }
 
+    // helper methods
+    public int size() {
+        return size;
+    }
+
+    public void clear() {
+        head = null;
+        tail = null;
+        size = 0;
+    }
+
     // display elements using iterator
     public String display() {
         String str = "";
@@ -102,10 +113,6 @@ public class CustomLinkedList<T> implements Iterable<T> {
             str += item + "\n";
         }
         return str;
-    }
-
-    public int size() {
-        return size;
     }
 
     @Override

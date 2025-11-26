@@ -12,8 +12,15 @@ import java.io.File;
 import java.io.IOException;
 
 public class SetupController {
+    @FXML public Spinner<Integer> numFloors;
     @FXML private TextField supermarketName;
     @FXML private Label welcomeText;
+
+    @FXML
+    public void initialize() {
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10, 1);
+        numFloors.setValueFactory(valueFactory);
+    }
 
     @FXML
     protected void onCreateSupermarketButtonPressed() throws IOException {
@@ -23,6 +30,7 @@ public class SetupController {
             return;
         }
 
+        int floors = numFloors.getValue();
         Supermarket supermarket;
 
         File file = new File(name + ".xml");
@@ -30,16 +38,11 @@ public class SetupController {
         if (file.exists()) {
             try {
                 supermarket = Supermarket.load(name);
-                welcomeText.setText("Loaded existing supermarket: " + name);
             } catch (Exception e) {
-                welcomeText.setText("Failed to load existing file!");
-                e.printStackTrace();
                 return;
             }
         } else {
-            // Create new
-            supermarket = new Supermarket(name);
-            welcomeText.setText("Created new supermarket: " + name);
+            supermarket = new Supermarket(name, floors);
         }
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/dsa_ca1/supermarket.fxml"));

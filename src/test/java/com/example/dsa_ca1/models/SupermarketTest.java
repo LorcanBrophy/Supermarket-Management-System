@@ -11,7 +11,7 @@ class SupermarketTest {
 
     @BeforeEach
     void setup() {
-        supermarket = new Supermarket("Tesco");
+        supermarket = new Supermarket("Tesco", 2);
 
         floorArea1 = new FloorArea("Fruit and Veg", "Ground Floor");
         floorArea2 = new FloorArea("Dairy", "First Floor");

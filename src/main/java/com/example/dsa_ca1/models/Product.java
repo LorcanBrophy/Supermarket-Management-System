@@ -47,14 +47,14 @@ public class Product {
         return price * quantity;
     }
 
-    // toString
     @Override
     public String toString() {
         return "Product: " + productName +
                 " | Price: €" + String.format("%.2f", price) +
                 " | Weight: " + weight + "g" +
-                " | Quantity: " + quantity +
+                " | Qty: " + quantity +
                 " | Temp: " + temperature +
-                " | Photo: " + photoURL;
+                " | Photo: " + photoURL +
+                " | Total Value: €" + String.format("%.2f", totalValue());
     }
 }

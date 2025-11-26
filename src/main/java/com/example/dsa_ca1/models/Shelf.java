@@ -30,10 +30,17 @@ public class Shelf {
         products.removeValue(p);
     }
 
+    public float totalValue() {
+        float total = 0;
+        for (Product product : products) {
+            total += product.totalValue();
+        }
+        return total;
+    }
+
     @Override
     public String toString() {
         return "Shelf " + shelfNum +
-                " | Total Products: " + products.size() +
-                " | Contents:\n" + products.display();
+                " | Total Products: " + products.size();
     }
 }
