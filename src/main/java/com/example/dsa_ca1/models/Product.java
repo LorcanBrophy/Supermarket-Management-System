@@ -52,7 +52,7 @@ public class Product {
         return "Product: " + productName +
                 " | Price: €" + String.format("%.2f", price) +
                 " | Weight: " + weight + "g" +
-                " | Qty: " + quantity +
+                " | Quantity: " + quantity +
                 " | Temp: " + temperature +
                 " | Photo: " + photoURL +
                 " | Total Value: €" + String.format("%.2f", totalValue());

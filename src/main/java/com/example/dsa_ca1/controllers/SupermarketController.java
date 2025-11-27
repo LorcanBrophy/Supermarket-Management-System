@@ -12,11 +12,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SupermarketController {
     @FXML
@@ -212,6 +212,11 @@ public class SupermarketController {
         return null;
     }
 
+    // helper class that applies style sheet to dialog boxes
+    private void styleDialog(Dialog<?> dialog) {
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/example/dsa_ca1/style.css")).toExternalForm());
+    }
+
     // adds a floorArea when Add button is pressed
     @FXML
     private void onAddFloorArea() {
@@ -220,6 +225,10 @@ public class SupermarketController {
         nameDialog.setTitle("Add Floor Area");
         nameDialog.setHeaderText("Set Floor Area Name");
         nameDialog.setContentText("Name (e.g. Dairy):");
+        nameDialog.setGraphic(null);
+
+        styleDialog(nameDialog);
+
         String name = nameDialog.showAndWait().orElse("").trim();
         if (name.isEmpty()) return;
 
@@ -235,9 +244,12 @@ public class SupermarketController {
         levelDialog.setTitle("Add Floor Area");
         levelDialog.setHeaderText("Select Floor Level");
         levelDialog.setContentText("Choose:");
+        nameDialog.setGraphic(null);
 
-        String level = levelDialog.showAndWait().orElse(null);
-        if (level == null) return;
+        styleDialog(levelDialog);
+
+        String level = levelDialog.showAndWait().orElse("").trim();
+        if (level.isEmpty()) return;
 
         // check if this name is already used by another floor area
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
@@ -290,12 +302,8 @@ public class SupermarketController {
     // edits a selected floorArea when Edit button is pressed
     @FXML
     private void onEditFloorArea() {
-        // get the selected floor area name from the list
-        String selectedText = floorAreaListView.getSelectionModel().getSelectedItem();
-        if (selectedText == null) return;
-
         // find the corresponding floor area object
-        FloorArea toEdit = findFloorAreaByDisplay(selectedText);
+        FloorArea toEdit = selectedFloorArea;
         if (toEdit == null) return;
 
         // name
@@ -303,6 +311,9 @@ public class SupermarketController {
         nameDialog.setTitle("Edit Floor Area");
         nameDialog.setHeaderText("Edit Floor Area Name");
         nameDialog.setContentText("Name:");
+        nameDialog.setGraphic(null);
+        styleDialog(nameDialog);
+
         String newName = nameDialog.showAndWait().orElse("").trim();
         if (newName.isEmpty()) return;
 
@@ -313,21 +324,22 @@ public class SupermarketController {
         }
 
         // displays the options from levels[]
-        ChoiceDialog<String> levelDialog = new ChoiceDialog<>(levels[0], levels);
-        levelDialog.setTitle("Add Floor Area");
+        ChoiceDialog<String> levelDialog = new ChoiceDialog<>(toEdit.getFloorLevel(), levels);
+        levelDialog.setTitle("Edit Floor Area");
         levelDialog.setHeaderText("Select Floor Level");
         levelDialog.setContentText("Choose:");
+        levelDialog.setGraphic(null);
+        styleDialog(levelDialog);
 
-        String newLevel = levelDialog.showAndWait().orElse(null);
-        if (newLevel == null) return;
+        String newLevel = levelDialog.showAndWait().orElse("").trim();
+        if (newLevel.isEmpty()) return;
 
         // apply updated values to the model
         toEdit.setFloorAreaName(newName);
         toEdit.setFloorLevel(newLevel);
 
         // update how it appears in the ListView
-        int index = floorAreaListView.getSelectionModel().getSelectedIndex();
-        floorAreaListView.getItems().set(index, newName);
+        floorAreaListView.refresh();
 
         drawFloorAreasMap();
     }
@@ -350,6 +362,9 @@ public class SupermarketController {
         nameDialog.setTitle("Add Aisle");
         nameDialog.setHeaderText("Set Aisle Name");
         nameDialog.setContentText("Name:");
+        nameDialog.setGraphic(null);
+        styleDialog(nameDialog);
+
         String name = nameDialog.showAndWait().orElse("").trim();
         if (name.isEmpty()) return;
 
@@ -370,6 +385,9 @@ public class SupermarketController {
         widthDialog.setTitle("Add Aisle");
         widthDialog.setHeaderText("Set Aisle Width");
         widthDialog.setContentText("Width (m):");
+        widthDialog.setGraphic(null);
+        styleDialog(widthDialog);
+
         String widthStr = widthDialog.showAndWait().orElse("").trim();
         if (widthStr.isEmpty()) return;
 
@@ -378,6 +396,9 @@ public class SupermarketController {
         heightDialog.setTitle("Add Aisle");
         heightDialog.setHeaderText("Set Aisle Height");
         heightDialog.setContentText("Height (m):");
+        heightDialog.setGraphic(null);
+        styleDialog(heightDialog);
+
         String heightStr = heightDialog.showAndWait().orElse("").trim();
         if (heightStr.isEmpty()) return;
 
@@ -388,17 +409,19 @@ public class SupermarketController {
         tempDialog.setTitle("Add Aisle");
         tempDialog.setHeaderText("Set Aisle Temperature");
         tempDialog.setContentText("Temp:");
+        tempDialog.setGraphic(null);
+        styleDialog(tempDialog);
 
         String temp;
-        temp = tempDialog.showAndWait().orElse(null);
-        if (temp == null || temp.isEmpty()) return;
+        temp = tempDialog.showAndWait().orElse("").trim();
+        if (temp.isEmpty()) return;
 
         // parse width/height
         // gives error if not valid input
-        int width, height;
+        float width, height;
         try {
-            width = Integer.parseInt(widthStr);
-            height = Integer.parseInt(heightStr);
+            width = Float.parseFloat(widthStr);
+            height = Float.parseFloat(heightStr);
         } catch (NumberFormatException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Number");
@@ -446,35 +469,40 @@ public class SupermarketController {
     // edits a selected aisle when Edit button is pressed
     @FXML
     public void onEditAisle() {
-        // get selected aisle from UI
-        String selectedText = aisleListView.getSelectionModel().getSelectedItem();
-        if (selectedText == null) return;
-
         // find the actual aisle object
-        Aisle toEdit = findAisleByDisplay(selectedText);
+        Aisle toEdit = selectedAisle;
         if (toEdit == null) return;
 
         // name
-        TextInputDialog nameDialog = new TextInputDialog();
+        TextInputDialog nameDialog = new TextInputDialog(toEdit.getAisleName());
         nameDialog.setTitle("Add Aisle");
         nameDialog.setHeaderText("Set Aisle Name");
         nameDialog.setContentText("Name:");
+        nameDialog.setGraphic(null);
+        styleDialog(nameDialog);
+
         String newName = nameDialog.showAndWait().orElse("").trim();
         if (newName.isEmpty()) return;
 
         // width
-        TextInputDialog widthDialog = new TextInputDialog();
+        TextInputDialog widthDialog = new TextInputDialog(Float.toString(toEdit.getAisleWidth()));
         widthDialog.setTitle("Add Aisle");
         widthDialog.setHeaderText("Set Aisle Width");
         widthDialog.setContentText("Width (m):");
+        widthDialog.setGraphic(null);
+        styleDialog(widthDialog);
+
         String widthStr = widthDialog.showAndWait().orElse("").trim();
         if (widthStr.isEmpty()) return;
 
         // height
-        TextInputDialog heightDialog = new TextInputDialog();
+        TextInputDialog heightDialog = new TextInputDialog(Float.toString(toEdit.getAisleHeight()));
         heightDialog.setTitle("Add Aisle");
         heightDialog.setHeaderText("Set Aisle Height");
         heightDialog.setContentText("Height (m):");
+        heightDialog.setGraphic(null);
+        styleDialog(heightDialog);
+
         String heightStr = heightDialog.showAndWait().orElse("").trim();
         if (heightStr.isEmpty()) return;
 
@@ -484,16 +512,25 @@ public class SupermarketController {
         tempDialog.setTitle("Add Aisle");
         tempDialog.setHeaderText("Set Aisle Temperature");
         tempDialog.setContentText("Temp:");
+        tempDialog.setGraphic(null);
+        styleDialog(tempDialog);
 
         String newTemp;
-        newTemp = tempDialog.showAndWait().orElse(null);
-        if (newTemp == null || newTemp.isEmpty()) return;
+        newTemp = tempDialog.showAndWait().orElse("").trim();
+        if (newTemp.isEmpty()) return;
+
+        // updates products temp
+        for (Shelf shelf : toEdit.getShelves()) {
+            for (Product product : shelf.getProducts()) {
+                product.setTemperature(newTemp);
+            }
+        }
 
         // parse width/height
-        int newWidth, newHeight;
+        float newWidth, newHeight;
         try {
-            newWidth = Integer.parseInt(widthStr);
-            newHeight = Integer.parseInt(heightStr);
+            newWidth = Float.parseFloat(widthStr);
+            newHeight = Float.parseFloat(heightStr);
         } catch (NumberFormatException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Invalid Number");
@@ -509,9 +546,9 @@ public class SupermarketController {
         toEdit.setAisleHeight(newHeight);
         toEdit.setAisleTemperature(newTemp);
 
-        // update UI list to show the new name
-        int index = aisleListView.getSelectionModel().getSelectedIndex();
-        aisleListView.getItems().set(index, newName);
+        // update UI list to show the new name, and new temp for product
+        aisleListView.refresh();
+        productTable.refresh();
 
         drawFloorAreasMap();
     }
@@ -565,8 +602,10 @@ public class SupermarketController {
         drawFloorAreasMap();
     }
 
+    // adds a product when Add button is pressed
     @FXML
     public void onAddProduct() {
+        // validation for no selected shelf
         if (selectedShelf == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No Shelf Selected");
@@ -581,14 +620,20 @@ public class SupermarketController {
         nameDialog.setTitle("Add Product");
         nameDialog.setHeaderText("Enter Product Name");
         nameDialog.setContentText("Name:");
+        nameDialog.setGraphic(null);
+        styleDialog(nameDialog);
+
         String name = nameDialog.showAndWait().orElse("").trim();
-        if (name.isEmpty()) return;
+        if (name.isEmpty()) return; // if i didnt have .orElse() i would need to check (name == null)
 
         // price
         TextInputDialog priceDialog = new TextInputDialog();
         priceDialog.setTitle("Add Product");
         priceDialog.setHeaderText("Set Product Price");
         priceDialog.setContentText("Price (€):");
+        priceDialog.setGraphic(null);
+        styleDialog(priceDialog);
+
         String priceStr = priceDialog.showAndWait().orElse("").trim();
         if (priceStr.isEmpty()) return;
 
@@ -597,6 +642,9 @@ public class SupermarketController {
         weightDialog.setTitle("Add Product");
         weightDialog.setHeaderText("Set Product Weight");
         weightDialog.setContentText("Weight (g):");
+        weightDialog.setGraphic(null);
+        styleDialog(weightDialog);
+
         String weightStr = weightDialog.showAndWait().orElse("").trim();
         if (weightStr.isEmpty()) return;
 
@@ -605,10 +653,14 @@ public class SupermarketController {
         quantityDialog.setTitle("Add Product");
         quantityDialog.setHeaderText("Set Product Quantity");
         quantityDialog.setContentText("Quantity:");
+        quantityDialog.setGraphic(null);
+        styleDialog(quantityDialog);
+
         String quantityStr = quantityDialog.showAndWait().orElse("").trim();
         if (quantityStr.isEmpty()) return;
 
         // temp
+        // get temp from the aisle (products inherit aisle temperature)
         String temp = selectedAisle.getAisleTemperature();
 
         // photo url
@@ -616,9 +668,13 @@ public class SupermarketController {
         photoDialog.setTitle("Add Product");
         photoDialog.setHeaderText("Set Product Photo URL");
         photoDialog.setContentText("URL:");
+        photoDialog.setGraphic(null);
+        styleDialog(photoDialog);
+
         String photoUrl = photoDialog.showAndWait().orElse("").trim();
         if (photoUrl.isEmpty()) return;
 
+        // parse price, weight, quantity to numbers
         float price, weight;
         int quantity;
         try {
@@ -634,6 +690,7 @@ public class SupermarketController {
             return;
         }
 
+        // check if a product with the same name + weight already exists on this shelf
         Product matchingProduct = null;
         for (Product product : selectedShelf.getProducts()) {
             if (product.getProductName().equals(name) && product.getWeight() == weight) {
@@ -642,6 +699,7 @@ public class SupermarketController {
             }
         }
 
+        // if product already exists, just update it instead of adding a new one
         if (matchingProduct != null) {
             matchingProduct.updateQuantity(quantity);
 
@@ -652,27 +710,35 @@ public class SupermarketController {
             return;
         }
 
-
+        // otherwise, create a new product
         Product newProduct = new Product(name, price, weight, quantity, temp, photoUrl);
 
+        // adds to the shelf object
         selectedShelf.addProduct(newProduct);
 
+        // adds to the table
         productTable.getItems().add(newProduct);
     }
 
+    // deletes a selected product when Remove button is pressed
     @FXML
     public void onRemoveProduct() {
+        // check if a product is actually selected, otherwise stop
         Product selected = productTable.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
+        // asks how much quantity to remove
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Remove Quantity");
         dialog.setHeaderText("Removing from: " + selected.getProductName());
         dialog.setContentText("Enter quantity to remove (Total " + selected.getQuantity() + "):");
+        dialog.setGraphic(null);
+        styleDialog(dialog);
 
-        String result = dialog.showAndWait().orElse(null);
-        if (result == null) return;
+        String result = dialog.showAndWait().orElse("").trim();
+        if (result.isEmpty()) return;
 
+        // parse result to int
         int amount;
         try {
             amount = Integer.parseInt(result);
@@ -686,63 +752,82 @@ public class SupermarketController {
             return;
         }
 
+        // if removing all/more than total, delete the product from the shelf completely
         if (amount >= selected.getQuantity()) {
             selectedShelf.removeProduct(selected);
             productTable.getItems().remove(selected);
         } else {
-            selected.setQuantity(selected.getQuantity() - amount);
+            // else just decrease the quantity
+            selected.updateQuantity(-amount);
         }
 
+        // refresh the table so the UI shows the updated values
         productTable.refresh();
     }
 
+    // edits a selected product when Edit button is pressed
     @FXML
     public void onEditProduct() {
-        Product selected = productTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        // uses product selected in the table
+        Product toEdit = productTable.getSelectionModel().getSelectedItem();
+        if (toEdit == null) return;
 
         // name
-        TextInputDialog nameDialog = new TextInputDialog(selected.getProductName());
+        TextInputDialog nameDialog = new TextInputDialog(toEdit.getProductName());
         nameDialog.setHeaderText("Edit Product Name");
+        nameDialog.setGraphic(null);
+        styleDialog(nameDialog);
+
         String newName = nameDialog.showAndWait().orElse("").trim();
         if (newName.isEmpty()) return;
 
         // price
-        TextInputDialog priceDialog = new TextInputDialog(String.valueOf(selected.getPrice()));
+        TextInputDialog priceDialog = new TextInputDialog(String.valueOf(toEdit.getPrice()));
         priceDialog.setHeaderText("Edit Product Price (€)");
+        priceDialog.setGraphic(null);
+        styleDialog(priceDialog);
+
         String priceStr = priceDialog.showAndWait().orElse("").trim();
         if (priceStr.isEmpty()) return;
 
         // weight
-        TextInputDialog weightDialog = new TextInputDialog(String.valueOf(selected.getWeight()));
+        TextInputDialog weightDialog = new TextInputDialog(String.valueOf(toEdit.getWeight()));
         weightDialog.setHeaderText("Edit Product Weight (g)");
+        weightDialog.setGraphic(null);
+        styleDialog(weightDialog);
+
         String weightStr = weightDialog.showAndWait().orElse("").trim();
         if (weightStr.isEmpty()) return;
 
         // quantity
-        TextInputDialog qtyDialog = new TextInputDialog(String.valueOf(selected.getQuantity()));
-        qtyDialog.setHeaderText("Edit Product Quantity");
-        String qtyStr = qtyDialog.showAndWait().orElse("").trim();
-        if (qtyStr.isEmpty()) return;
+        TextInputDialog quantityDialog = new TextInputDialog(String.valueOf(toEdit.getQuantity()));
+        quantityDialog.setHeaderText("Edit Product Quantity");
+        quantityDialog.setGraphic(null);
+        styleDialog(quantityDialog);
+
+        String quantityStr = quantityDialog.showAndWait().orElse("").trim();
+        if (quantityStr.isEmpty()) return;
 
         // temp
-        TextInputDialog tempDialog = new TextInputDialog(selected.getTemperature());
-        tempDialog.setHeaderText("Edit Storage Temp");
-        String newTemp = tempDialog.showAndWait().orElse("").trim();
-        if (newTemp.isEmpty()) return;
+        String newTemp = toEdit.getTemperature();
 
         // photo url
-        TextInputDialog urlDialog = new TextInputDialog(selected.getPhotoURL());
+        TextInputDialog urlDialog = new TextInputDialog(toEdit.getPhotoURL());
         urlDialog.setHeaderText("Edit Photo URL");
-        String newUrl = urlDialog.showAndWait().orElse("").trim();
+        urlDialog.setGraphic(null);
+        styleDialog(urlDialog);
 
+        String newUrl = urlDialog.showAndWait().orElse("").trim();
+        if (newUrl.isEmpty()) return;
+
+        // parse price, weight, and quantity from str
         float newPrice, newWeight;
-        int newQty;
+        int newQuantity;
 
         try {
             newPrice = Float.parseFloat(priceStr);
             newWeight = Float.parseFloat(weightStr);
-            newQty = Integer.parseInt(qtyStr);
+            newQuantity = Integer.parseInt(quantityStr);
         } catch (NumberFormatException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setHeaderText("Invalid Input");
@@ -751,31 +836,43 @@ public class SupermarketController {
             return;
         }
 
-        selected.setProductName(newName);
-        selected.setPrice(newPrice);
-        selected.setWeight(newWeight);
-        selected.setQuantity(newQty);
-        selected.setTemperature(newTemp);
-        selected.setPhotoURL(newUrl);
+        // update all product fields with the new values
+        toEdit.setProductName(newName);
+        toEdit.setPrice(newPrice);
+        toEdit.setWeight(newWeight);
+        toEdit.setQuantity(newQuantity);
+        toEdit.setTemperature(newTemp);
+        toEdit.setPhotoURL(newUrl);
 
+        // refresh the table so the changes appear instantly
         productTable.refresh();
     }
 
+    // searches for a product by name across the entire supermarke
     @FXML
     private void onSearchProduct() {
+        // asks user for product name to search, if multiple are found displays all
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Search Product");
         dialog.setHeaderText("Enter product name:");
         dialog.setContentText("Name:");
+        dialog.setGraphic(null);
+        styleDialog(dialog);
+
         String name = dialog.showAndWait().orElse("").trim();
         if (name.isEmpty()) return;
 
         StringBuilder sb = new StringBuilder();
         boolean found = false;
 
+        // search through the entire supermarket
+        // floorAreas
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
+            // aisles
             for (Aisle aisle : floorArea.getAisles()) {
+                // shelves
                 for (Shelf shelf : aisle.getShelves()) {
+                    // products
                     for (Product product : shelf.getProducts()) {
 
                         if (product.getProductName().equalsIgnoreCase(name)) {
@@ -784,7 +881,7 @@ public class SupermarketController {
                             sb.append("Product: ").append(product.getProductName()).append("\n");
                             sb.append("Floor Area: ").append(floorArea.getFloorAreaName()).append("\n");
                             sb.append("Aisle: ").append(aisle.getAisleName()).append("\n");
-                            sb.append("Shelf: ").append(selectedAisle.getAisleName()).append(" | Shelf ").append(shelf.getShelfNum()).append("\n");
+                            sb.append("Shelf: ").append(aisle.getAisleName()).append(" | Shelf ").append(shelf.getShelfNum()).append("\n");
                             sb.append("Quantity: ").append(product.getQuantity()).append("\n");
                             sb.append("Price: ").append(product.getPrice()).append("\n");
                             sb.append("Weight: ").append(product.getWeight()).append("\n");
@@ -796,29 +893,37 @@ public class SupermarketController {
             }
         }
 
+        // if nothing matched, tell the user
         if (!found) {
             sb.append("No products found with name: ").append(name);
         }
 
+        // display the results inside TextArea
         TextArea textArea = new TextArea(sb.toString());
         textArea.setEditable(false);
         textArea.setWrapText(true);
 
+        // displays TextArea in Alert popup
         Alert resultWindow = new Alert(Alert.AlertType.INFORMATION);
         resultWindow.setTitle("Search Results");
         resultWindow.setHeaderText("Matching Products Found:");
         resultWindow.getDialogPane().setContent(textArea);
+        resultWindow.setGraphic(null);
+        styleDialog(resultWindow);
 
         resultWindow.showAndWait();
     }
 
+    // draws floorArea to map based on floor level
     @FXML
     private void drawFloorAreasMap() {
+        // clear anything that was previously drawn on the map
         floorMapPane.getChildren().clear();
 
+        // get the currently selected floor level from the combo box
         String selectedFloor = floorSelectComboBox.getValue();
-        if (selectedFloor == null) return;
 
+        // loops through floor areas and only displays those that are on correct floor
         List<FloorArea> filteredFloorAreas = new ArrayList<>();
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
             if (floorArea.getFloorLevel().equals(selectedFloor)) {
@@ -826,132 +931,193 @@ public class SupermarketController {
             }
         }
 
+        // make size var based on size
         int numFloorAreas = filteredFloorAreas.size();
+
+        // if none match, exit
         if (numFloorAreas == 0) return;
 
+        // calculate available space in the pane
         double mapWidth = floorMapPane.getWidth();
         double mapHeight = floorMapPane.getHeight();
+
+        // padding around each floorArea
         double padding = 30;
+
+        // calculate width and height for each floorArea
+
+        // (width - total padding) / num floorAreas
         double floorWidth = (mapWidth - (padding * (numFloorAreas + 1))) / numFloorAreas;
+        // height - total padding
         double floorHeight = mapHeight - 2 * padding;
 
+        // represents position in map
         int index = 0;
-        for (FloorArea floorArea : filteredFloorAreas) {
-            double x = padding + index * (floorWidth + padding);
 
+        // draw each floorArea as a rectangle with a label
+        for (FloorArea floorArea : filteredFloorAreas) {
+
+            // calculates x position based on index (stacks horizontally)
+            double x = padding + (index * (floorWidth + padding));
+
+            // create the rectangle representing the floor area
             Rectangle rect = new Rectangle(floorWidth, floorHeight);
             rect.setX(x);
             rect.setY(padding);
             rect.getStyleClass().add("floor-area");
             floorMapPane.getChildren().add(rect);
 
+            // add a label for the floor area name
             Label label = new Label(floorArea.getFloorAreaName());
             label.setLayoutX(x + 5);
             label.setLayoutY(padding + 5);
-            label.setTextFill(Color.WHITE);
             label.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
             floorMapPane.getChildren().add(label);
 
+            // draw all aisles inside this floor area
             drawAisles(floorArea, rect);
+
             index++;
         }
     }
 
+    // draws aisles inside selected floorArea
     @FXML
-    private void drawAisles(FloorArea floorArea, Rectangle floorRect) {
-        double xStart = floorRect.getX();
-        double yStart = floorRect.getY();
-        double width = floorRect.getWidth();
-        double height = floorRect.getHeight();
+    private void drawAisles(FloorArea floorArea, Rectangle floorAreaRect) {
+        // x and y coords for the floorArea rectangle
+        double xStart = floorAreaRect.getX();
+        double yStart = floorAreaRect.getY();
 
+        // width and height of the floorArea rect
+        double width = floorAreaRect.getWidth();
+        double height = floorAreaRect.getHeight();
+
+        // since filtering is already done, just use amount of aisles in selected floorArea
         int numAisles = floorArea.getAisles().size();
+
+        // if 0, don't draw
         if (numAisles == 0) return;
 
+        // padding around each aisle
         double padding = 30;
-        double aisleHeight = (height - (padding * (numAisles + 1))) / numAisles;
-        double aisleWidth = width - 2 * padding;
 
+        // calculate width and height for each aisle
+
+        // width - total padding
+        double aisleWidth = width - 2 * padding;
+        // (height - total padding) / num aisle
+        double aisleHeight = (height - (padding * (numAisles + 1))) / numAisles;
+
+        // represents position in floorArea
         int index = 0;
+
+        // draw each aisle as a rectangle with a label
         for (Aisle aisle : floorArea.getAisles()) {
 
-            double ax = xStart + padding;
-            double ay = yStart + padding + index * (aisleHeight + padding);
+            // calculates x and y position based on index (stacks vertically)
+            double aisleX = xStart + padding;
+            double aisleY = yStart + padding + index * (aisleHeight + padding);
 
+            // draw the aisle in the floorArea
             Rectangle rect = new Rectangle(aisleWidth, aisleHeight);
-            rect.setX(ax);
-            rect.setY(ay);
-
+            rect.setX(aisleX);
+            rect.setY(aisleY);
             rect.getStyleClass().add("aisle");
-
             floorMapPane.getChildren().add(rect);
 
+            // draw label
             Label aisleLabel = new Label(aisle.getAisleName());
-            aisleLabel.setLayoutX(ax + padding);
-            aisleLabel.setLayoutY(ay + 5);
-            aisleLabel.setTextFill(Color.WHITE);
+            aisleLabel.setLayoutX(aisleX + padding);
+            aisleLabel.setLayoutY(aisleY + 5);
             aisleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
             floorMapPane.getChildren().add(aisleLabel);
 
+            // draw shelves inside this aisle
             drawShelves(aisle, rect);
+
             index++;
         }
     }
 
+    // draws shelves inside selected aisle
     @FXML
     private void drawShelves(Aisle aisle, Rectangle aisleRect) {
+        // x and y coords for the aisle rectangle
         double xStart = aisleRect.getX();
         double yStart = aisleRect.getY();
+
+        // width and height of the aisle rect
         double width = aisleRect.getWidth();
         double height = aisleRect.getHeight();
 
+        // gets total amount of shelves
         int numShelves = aisle.getShelves().size();
+
+        // if 0, don't draw
         if (numShelves == 0) return;
 
+        // padding around each shelf
         double padding = 30;
-        double shelfHeight = (height - (padding * (numShelves + 1))) / numShelves;
+
+        // calculate width and height for each aisle
+
+        // width - total padding
         double shelfWidth = width - 2 * padding;
+        // (height - total padding) / num aisle
+        double shelfHeight = (height - (padding * (numShelves + 1))) / numShelves;
 
+        // represents position in floorArea
         int index = 0;
+
+        // draw each aisle as a rectangle with a label
         for (Shelf shelf : aisle.getShelves()) {
-            double sx = xStart + padding;
-            double sy = yStart + padding + index * (shelfHeight + padding);
+            // calculates x and y position based on index (stacks vertically)
+            double shelfX = xStart + padding;
+            double shelfY = yStart + padding + index * (shelfHeight + padding);
 
+            // draw the shelf
             Rectangle rect = new Rectangle(shelfWidth, shelfHeight);
-            rect.setX(sx);
-            rect.setY(sy);
-
+            rect.setX(shelfX);
+            rect.setY(shelfY);
             rect.getStyleClass().add("shelf");
-
             floorMapPane.getChildren().add(rect);
 
+            // draw label
             Label shelfLabel = new Label(aisle.getAisleName() + " | Shelf " + shelf.getShelfNum());
-            shelfLabel.setLayoutX(sx + 5);
-            shelfLabel.setLayoutY(sy + 5);
-            shelfLabel.setTextFill(Color.WHITE);
+            shelfLabel.setLayoutX(shelfX + 5);
+            shelfLabel.setLayoutY(shelfY + 5);
             shelfLabel.setStyle("-fx-font-size: 10; -fx-font-weight: bold;");
             floorMapPane.getChildren().add(shelfLabel);
+
             index++;
         }
     }
 
+    // when Save is clicked, save current linked list
     @FXML
     public void onSave() {
         try {
+            // try save the supermarket using its name as the filename
             supermarket.save(supermarket.getName());
         } catch (Exception e) {
+            // prints out issue name
             System.err.println("Error writing to file: " + e);
         }
     }
 
+    // when Reset is clicked, resets the entire supermarket and ui lists
     @FXML
     public void onReset() {
+        // clear all floor areas from the supermarket object
         supermarket.getFloorAreas().clear();
 
+        // clear all list views so nothing is shown
         floorAreaListView.getItems().clear();
         aisleListView.getItems().clear();
         shelfListView.getItems().clear();
         productTable.getItems().clear();
 
+        // reset any selected items
         selectedFloorArea = null;
         selectedAisle = null;
         selectedShelf = null;
@@ -959,14 +1125,18 @@ public class SupermarketController {
         drawFloorAreasMap();
     }
 
+    // loops through the supermarket and adds everything to a string
     private String printLinkedList() {
+        // build a string representation of the supermarket and all its contents
         StringBuilder sb = new StringBuilder();
 
         sb.append("======== SUPERMARKET========\n");
 
+        // print the main supermarket info and its total value
         sb.append("\n").append(supermarket.toString()).append("\n");
         sb.append(String.format("Total Value: €%.2f\n", supermarket.totalValue()));
 
+        // loop through each floor area in the supermarket
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
 
             sb.append("\n========================================\n");
@@ -974,6 +1144,7 @@ public class SupermarketController {
             sb.append(String.format("Total Value: €%.2f\n", floorArea.totalValue()));
             sb.append("========================================\n");
 
+            // loop through each aisle in the floor area
             for (Aisle aisle : floorArea.getAisles()) {
 
                 sb.append("\n--------------------------------------\n");
@@ -981,10 +1152,12 @@ public class SupermarketController {
                 sb.append(String.format("Total Value: €%.2f\n", aisle.totalValue()));
                 sb.append("--------------------------------------\n");
 
+                // loop through each shelf in the aisle
                 for (Shelf shelf : aisle.getShelves()) {
                     sb.append(shelf).append("\n");
                     sb.append(String.format("Total Value: €%.2f\n", shelf.totalValue()));
 
+                    // print all products on this shelf
                     sb.append("\n").append(shelf.getProducts().display()).append("\n");
                 }
             }
@@ -995,21 +1168,28 @@ public class SupermarketController {
         return sb.toString();
     }
 
+    // displays the string of everything in a textArea in an alert
     @FXML
     public void onViewAll() {
+        // create a textArea and fill it with the full supermarket printout
         TextArea textArea = new TextArea(printLinkedList());
         textArea.setWrapText(false);
 
+        // create an alert to display the textArea
         Alert resultWindow = new Alert(Alert.AlertType.INFORMATION);
         resultWindow.setTitle("All Stock");
         resultWindow.setHeaderText("Overview of All Stock");
+        resultWindow.setGraphic(null);
+        styleDialog(resultWindow);
 
-
+        // make the dialog match scene size
         resultWindow.getDialogPane().setMinWidth(900);
         resultWindow.getDialogPane().setMinHeight(600);
 
+        // set the textArea as the content of the alert
         resultWindow.getDialogPane().setContent(textArea);
 
+        // show the alert and wait for the user to close it
         resultWindow.showAndWait();
     }
 }

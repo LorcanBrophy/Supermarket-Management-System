@@ -108,11 +108,11 @@ public class CustomLinkedList<T> implements Iterable<T> {
 
     // display elements using iterator
     public String display() {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         for (T item : this) {
-            str += item + "\n";
+            str.append(item).append("\n");
         }
-        return str;
+        return str.toString();
     }
 
     @Override
