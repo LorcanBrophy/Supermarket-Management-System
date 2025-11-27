@@ -58,10 +58,10 @@
                         <Button text="Add" onAction="#onAddProduct"/>
                         <Button text="Remove" onAction="#onRemoveProduct"/>
                         <Button text="Edit" onAction="#onEditProduct"/>
-                        <Button text="Search" onAction="#onSearchProduct"/>
 
                         <Pane HBox.hgrow="ALWAYS"/>
 
+                        <Button text="Search" onAction="#onSearchProduct"/>
                         <Button text="View All" onAction="#onViewAll" />
                         <Button text="Reset" onAction="#onReset" />
                         <Button text="Save" onAction="#onSave" />
@@ -73,8 +73,8 @@
     </Tab>
 
     <Tab text="Map" closable="false">
-        <AnchorPane fx:id="mapPane">
-            <ComboBox fx:id="floorSelectComboBox" layoutX="35" layoutY="10" prefWidth="150" promptText="Select Floor" />
+        <AnchorPane>
+            <ComboBox fx:id="floorSelectComboBox" layoutX="35" layoutY="20" prefWidth="150" promptText="Select Floor" />
 
             <Pane fx:id="floorMapPane" layoutY="45" prefWidth="900" prefHeight="530"/>
         </AnchorPane>

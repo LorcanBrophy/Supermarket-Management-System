@@ -11,7 +11,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -24,8 +23,6 @@ public class SupermarketController {
     public Pane floorMapPane;
     @FXML
     private ComboBox<String> floorSelectComboBox;
-    @FXML
-    private AnchorPane mapPane;
     @FXML
     private TableView<Product> productTable;
 
@@ -50,33 +47,38 @@ public class SupermarketController {
     @FXML
     private ListView<String> shelfListView;
 
+    // keeps track of what the user has selected at each level
     private FloorArea selectedFloorArea;
     private Aisle selectedAisle;
     private Shelf selectedShelf;
 
+    // reference to the supermarket currently being viewed
     private Supermarket supermarket;
 
     @FXML
     public void initialiseSupermarket(Supermarket supermarket) {
+        // store the supermarket instance so everything else can use it
         this.supermarket = supermarket;
 
+        // fill the floor area list with the names of each floor area
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
             floorAreaListView.getItems().add(floorArea.getFloorAreaName());
         }
 
+        // adds a listener to the floorArea ListView, loads the relevant aisles for the selected floorArea
         floorAreaListView.getSelectionModel().selectedItemProperty().addListener((_, _, newVal) -> {
             // ignore if nothing was selected
             if (newVal == null) return;
 
-            // clear anything previously shown for another floor area
+            // clear previous aisle, shelf, and product data
             aisleListView.getItems().clear();
             shelfListView.getItems().clear();
             productTable.getItems().clear();
 
-            // reset the selected floor area reference
+            // reset the selected floor area before searching
             selectedFloorArea = null;
 
-            // find the actual floorArea object that matches the clicked name
+            // find the actual FloorArea object that matches the clicked name
             for (FloorArea floorArea : supermarket.getFloorAreas()) {
                 String display = floorArea.getFloorAreaName();
                 if (display.equals(newVal)) {
@@ -85,7 +87,7 @@ public class SupermarketController {
                 }
             }
 
-            // if a floor area was found, populate its aisles in the list
+            // if floor area is found, load its aisles
             if (selectedFloorArea != null) {
                 for (Aisle aisle : selectedFloorArea.getAisles()) {
                     aisleListView.getItems().add(aisle.getAisleName());
@@ -93,13 +95,17 @@ public class SupermarketController {
             }
         });
 
+        // adds a listener to the aisle ListView, loads the relevant shelves for the selected aisle
         aisleListView.getSelectionModel().selectedItemProperty().addListener((_, _, newVal) -> {
             if (newVal == null) return;
 
+            // clear previous shelves and products
             shelfListView.getItems().clear();
             productTable.getItems().clear();
 
             selectedAisle = null;
+
+            // find the selected aisle based on the clicked name
             for (Aisle aisle : selectedFloorArea.getAisles()) {
                 if (aisle.getAisleName().equals(newVal)) {
                     selectedAisle = aisle;
@@ -107,6 +113,7 @@ public class SupermarketController {
                 }
             }
 
+            // if we found an aisle, add its shelves to the list
             if (selectedAisle != null) {
                 for (Shelf shelf : selectedAisle.getShelves()) {
                     shelfListView.getItems().add(selectedAisle.getAisleName() + " | Shelf " + shelf.getShelfNum());
@@ -114,12 +121,16 @@ public class SupermarketController {
             }
         });
 
+        // adds a listener to the shelf ListView, loads the relevant products for the selected aisle
         shelfListView.getSelectionModel().selectedItemProperty().addListener((_, _, newVal) -> {
             if (newVal == null) return;
 
+            // clear product table before adding new items
             productTable.getItems().clear();
 
             selectedShelf = null;
+
+            // find the selected shelf based on the clicked name
             for (Shelf shelf : selectedAisle.getShelves()) {
                 if ((selectedAisle.getAisleName() + " | Shelf " + shelf.getShelfNum()).equals(newVal)) {
                     selectedShelf = shelf;
@@ -127,6 +138,7 @@ public class SupermarketController {
                 }
             }
 
+            // load all products into the table
             if (selectedShelf != null) {
                 ObservableList<Product> products = FXCollections.observableArrayList();
                 for (Product product : selectedShelf.getProducts()) {
@@ -136,6 +148,7 @@ public class SupermarketController {
             }
         });
 
+        // set up product table columns to pull their values from Product fields
         productNameCol.setCellValueFactory(new PropertyValueFactory<>("productName"));
         productPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
         productWeightCol.setCellValueFactory(new PropertyValueFactory<>("weight"));
@@ -143,21 +156,25 @@ public class SupermarketController {
         productTempCol.setCellValueFactory(new PropertyValueFactory<>("temperature"));
         photoUrl.setCellValueFactory(new PropertyValueFactory<>("photoURL"));
 
+        // draw the map after the ui fully loads, or else it will be blank if loading xml
         Platform.runLater(this::drawFloorAreasMap);
 
+        // populate the floor selection combo box
         floorSelectComboBox.getItems().clear();
         for (int i = 0; i < supermarket.getNumFloors(); i++) {
             floorSelectComboBox.getItems().add("Floor " + (i + 1));
         }
 
+        // automatically select the first floor
         if (!floorSelectComboBox.getItems().isEmpty()) {
             floorSelectComboBox.getSelectionModel().selectFirst();
         }
 
+        // whenever the selected floor changes, redraw the map for that floor
         floorSelectComboBox.setOnAction(_ -> drawFloorAreasMap());
-
     }
 
+    // Searches through all floorAreas objects and returns the one whose display name matches the text selected in the ListView
     @FXML
     private FloorArea findFloorAreaByDisplay(String displayText) {
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
@@ -169,6 +186,7 @@ public class SupermarketController {
         return null;
     }
 
+    // Searches through all aisle objects in the current floorArea and returns the one whose display name matches the text selected in the ListView
     @FXML
     private Aisle findAisleByDisplay(String displayText) {
         if (selectedFloorArea == null) return null;
@@ -181,6 +199,7 @@ public class SupermarketController {
         return null;
     }
 
+    // Searches through all shelf objects in the current floorArea and returns the one whose display name matches the text selected in the ListView
     @FXML
     private Shelf findShelfByDisplay(String displayText) {
         if (selectedAisle == null) return null;
@@ -193,6 +212,7 @@ public class SupermarketController {
         return null;
     }
 
+    // adds a floorArea when Add button is pressed
     @FXML
     private void onAddFloorArea() {
         // name
@@ -204,11 +224,13 @@ public class SupermarketController {
         if (name.isEmpty()) return;
 
         // level
+        // build a list of floor levels the user can choose from
         String[] levels = new String[supermarket.getNumFloors()];
         for (int i = 0; i < supermarket.getNumFloors(); i++) {
             levels[i] = "Floor " + (i + 1);
         }
 
+        // displays the options from levels[]
         ChoiceDialog<String> levelDialog = new ChoiceDialog<>(levels[0], levels);
         levelDialog.setTitle("Add Floor Area");
         levelDialog.setHeaderText("Select Floor Level");
@@ -217,6 +239,7 @@ public class SupermarketController {
         String level = levelDialog.showAndWait().orElse(null);
         if (level == null) return;
 
+        // check if this name is already used by another floor area
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
             if (floorArea.getFloorAreaName().equals(name)) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -228,28 +251,35 @@ public class SupermarketController {
             }
         }
 
+        // create and store the new floor area
         FloorArea newFloorArea = new FloorArea(name, level);
         supermarket.getFloorAreas().add(newFloorArea);
 
+        // show it in the list view
         floorAreaListView.getItems().add(name);
 
-        printLinkedList();
         drawFloorAreasMap();
     }
 
+    // deletes a selected floorArea when Remove button is pressed
     @FXML
     private void onRemoveFloorArea() {
+        // get floorArea name from UI
         String selectedText = floorAreaListView.getSelectionModel().getSelectedItem();
         if (selectedText == null) return;
 
+        // find the actual object linked to that display text
         FloorArea toRemove = findFloorAreaByDisplay(selectedText);
         if (toRemove == null) return;
 
+        // clear the selectedFloorArea since its is being removed
         selectedFloorArea = null;
 
+        // remove from linked list and UI ListView
         supermarket.getFloorAreas().removeValue(toRemove);
         floorAreaListView.getItems().remove(selectedText);
 
+        // wipe any aisles/shelves/products that were showing
         aisleListView.getItems().clear();
         shelfListView.getItems().clear();
         productTable.getItems().clear();
@@ -257,11 +287,14 @@ public class SupermarketController {
         drawFloorAreasMap();
     }
 
+    // edits a selected floorArea when Edit button is pressed
     @FXML
     private void onEditFloorArea() {
+        // get the selected floor area name from the list
         String selectedText = floorAreaListView.getSelectionModel().getSelectedItem();
         if (selectedText == null) return;
 
+        // find the corresponding floor area object
         FloorArea toEdit = findFloorAreaByDisplay(selectedText);
         if (toEdit == null) return;
 
@@ -274,24 +307,35 @@ public class SupermarketController {
         if (newName.isEmpty()) return;
 
         // level
-        TextInputDialog levelDialog = new TextInputDialog(toEdit.getFloorLevel());
-        levelDialog.setTitle("Edit Floor Area");
-        levelDialog.setHeaderText("Edit Floor Level");
-        levelDialog.setContentText("Level:");
-        String newLevel = levelDialog.showAndWait().orElse("").trim();
-        if (newLevel.isEmpty()) return;
+        String[] levels = new String[supermarket.getNumFloors()];
+        for (int i = 0; i < supermarket.getNumFloors(); i++) {
+            levels[i] = "Floor " + (i + 1);
+        }
 
+        // displays the options from levels[]
+        ChoiceDialog<String> levelDialog = new ChoiceDialog<>(levels[0], levels);
+        levelDialog.setTitle("Add Floor Area");
+        levelDialog.setHeaderText("Select Floor Level");
+        levelDialog.setContentText("Choose:");
+
+        String newLevel = levelDialog.showAndWait().orElse(null);
+        if (newLevel == null) return;
+
+        // apply updated values to the model
         toEdit.setFloorAreaName(newName);
         toEdit.setFloorLevel(newLevel);
 
+        // update how it appears in the ListView
         int index = floorAreaListView.getSelectionModel().getSelectedIndex();
-        floorAreaListView.getItems().set(index, newName + " (" + newLevel + ")");
+        floorAreaListView.getItems().set(index, newName);
 
         drawFloorAreasMap();
     }
 
+    // adds an aisle when Add button is pressed
     @FXML
     public void onAddAisle() {
+        // stops user from adding aisle when no floorArea is selected
         if (selectedFloorArea == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No Floor Area Selected");
@@ -309,6 +353,7 @@ public class SupermarketController {
         String name = nameDialog.showAndWait().orElse("").trim();
         if (name.isEmpty()) return;
 
+        // check if an aisle with this name already exists in the floor area
         for (Aisle aisle : selectedFloorArea.getAisles()) {
             if (aisle.getAisleName().equalsIgnoreCase(name)) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -337,6 +382,7 @@ public class SupermarketController {
         if (heightStr.isEmpty()) return;
 
         // temp
+        // makes array for each option, which is used in a choiceDialog
         String[] temps = {"Room", "Refrigerated", "Frozen"};
         ChoiceDialog<String> tempDialog = new ChoiceDialog<>(temps[0], temps);
         tempDialog.setTitle("Add Aisle");
@@ -347,6 +393,8 @@ public class SupermarketController {
         temp = tempDialog.showAndWait().orElse(null);
         if (temp == null || temp.isEmpty()) return;
 
+        // parse width/height
+        // gives error if not valid input
         int width, height;
         try {
             width = Integer.parseInt(widthStr);
@@ -360,42 +408,49 @@ public class SupermarketController {
             return;
         }
 
+        // create and attach the new aisle to the selected floor area
         Aisle newAisle = new Aisle(name, width, height, temp);
         selectedFloorArea.addAisle(newAisle);
 
-        for (Aisle aisle : selectedFloorArea.getAisles()) {
-            System.out.println(aisle.toString());
-        }
-
+        // add it to the UI list
         aisleListView.getItems().add(name);
 
         drawFloorAreasMap();
     }
 
+    // deletes a selected aisle when Remove button is pressed
     @FXML
     public void onRemoveAisle() {
+        // get aisle name from UI
         String selectedText = aisleListView.getSelectionModel().getSelectedItem();
         if (selectedText == null) return;
 
+        // find the matching aisle object
         Aisle toRemove = findAisleByDisplay(selectedText);
         if (toRemove == null) return;
 
+        // clear reference
         selectedAisle = null;
 
+        // remove from the linked list + UI
         selectedFloorArea.getAisles().removeValue(toRemove);
         aisleListView.getItems().remove(selectedText);
 
+        // clear shelf and product table
         shelfListView.getItems().clear();
         productTable.getItems().clear();
 
         drawFloorAreasMap();
     }
 
+    // edits a selected aisle when Edit button is pressed
     @FXML
     public void onEditAisle() {
+        // get selected aisle from UI
         String selectedText = aisleListView.getSelectionModel().getSelectedItem();
         if (selectedText == null) return;
 
+        // find the actual aisle object
         Aisle toEdit = findAisleByDisplay(selectedText);
         if (toEdit == null) return;
 
@@ -434,6 +489,7 @@ public class SupermarketController {
         newTemp = tempDialog.showAndWait().orElse(null);
         if (newTemp == null || newTemp.isEmpty()) return;
 
+        // parse width/height
         int newWidth, newHeight;
         try {
             newWidth = Integer.parseInt(widthStr);
@@ -447,19 +503,23 @@ public class SupermarketController {
             return;
         }
 
+        // update aisle
         toEdit.setAisleName(newName);
         toEdit.setAisleWidth(newWidth);
         toEdit.setAisleHeight(newHeight);
         toEdit.setAisleTemperature(newTemp);
 
+        // update UI list to show the new name
         int index = aisleListView.getSelectionModel().getSelectedIndex();
         aisleListView.getItems().set(index, newName);
 
         drawFloorAreasMap();
     }
 
+    // adds a shelf when Add button is pressed
     @FXML
     public void onAddShelf() {
+        // if no aisle is selected, warn the user and stop
         if (selectedAisle == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No Aisle Selected");
@@ -469,29 +529,39 @@ public class SupermarketController {
             return;
         }
 
+        // adds 1 to total shelf size, since linkedList uses 0 based indexing
         int shelfNum = selectedAisle.getShelves().size() + 1;
 
+        // create the new shelf and add it to the aisle
         Shelf newShelf = new Shelf(shelfNum);
         selectedAisle.addShelf(newShelf);
 
+        // display it in the shelf list
         shelfListView.getItems().add(selectedAisle.getAisleName() + " | Shelf " + shelfNum);
         drawFloorAreasMap();
     }
 
+    // deletes a selected shelf when Remove button is pressed
     @FXML
     public void onRemoveShelf() {
+        // get whatever shelf the user clicked
         String selectedText = shelfListView.getSelectionModel().getSelectedItem();
         if (selectedText == null) return;
 
+        // find the actual shelf object that matches the list entry
         Shelf toRemove = findShelfByDisplay(selectedText);
         if (toRemove == null) return;
 
+        // clear any selected shelf
         selectedShelf = null;
 
+        // remove the shelf from the aisle and from the UI list
         selectedAisle.getShelves().removeValue(toRemove);
         shelfListView.getItems().remove(selectedText);
 
+        // clear the table since the shelf is gone
         productTable.getItems().clear();
+
         drawFloorAreasMap();
     }
 
@@ -573,7 +643,7 @@ public class SupermarketController {
         }
 
         if (matchingProduct != null) {
-            matchingProduct.setQuantity(matchingProduct.getQuantity() + quantity);
+            matchingProduct.updateQuantity(quantity);
 
             matchingProduct.setPrice(price);
             matchingProduct.setPhotoURL(photoUrl);
