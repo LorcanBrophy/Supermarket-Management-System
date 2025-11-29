@@ -58,8 +58,10 @@
                         <Button text="Add" onAction="#onAddProduct"/>
                         <Button text="Remove" onAction="#onRemoveProduct"/>
                         <Button text="Edit" onAction="#onEditProduct"/>
+                        <Button text="Smart Add" onAction="#onSmartAdd"/>
 
                         <Pane HBox.hgrow="ALWAYS"/>
+
 
                         <Button text="Search" onAction="#onSearchProduct"/>
                         <Button text="View All" onAction="#onViewAll" />

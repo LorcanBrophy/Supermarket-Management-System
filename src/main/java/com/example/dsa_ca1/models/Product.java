@@ -7,7 +7,7 @@ public class Product {
     private float price;
     private float weight;
     private int quantity;
-    private String temperature; // "room", "fridge", "freezer"
+    private String temperature; // "Room", "Refrigerated", "Frozen"
     private String photoURL;
 
     // constructor
