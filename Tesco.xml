@@ -1,0 +1,311 @@
+<object-stream>
+  <com.example.dsa__ca1.models.Supermarket>
+    <name>Tesco</name>
+    <floorAreas>
+      <head>
+        <data class="com.example.dsa_ca1.models.FloorArea">
+          <floorAreaName>Dairy</floorAreaName>
+          <floorLevel>Floor 2</floorLevel>
+          <aisles>
+            <head>
+              <data class="com.example.dsa_ca1.models.Aisle">
+                <aisleName>Milk</aisleName>
+                <aisleWidth>2.0</aisleWidth>
+                <aisleHeight>2.0</aisleHeight>
+                <aisleTemperature>Refrigerated</aisleTemperature>
+                <shelves>
+                  <head>
+                    <data class="com.example.dsa_ca1.models.Shelf">
+                      <shelfNum>1</shelfNum>
+                      <products>
+                        <head>
+                          <data class="com.example.dsa_ca1.models.Product">
+                            <productName>SuperMilk</productName>
+                            <price>3.0</price>
+                            <weight>1000.0</weight>
+                            <quantity>32</quantity>
+                            <temperature>Refrigerated</temperature>
+                            <photoURL>milk.png</photoURL>
+                          </data>
+                          <next>
+                            <data class="com.example.dsa_ca1.models.Product">
+                              <productName>Skimmed Milk</productName>
+                              <price>1.99</price>
+                              <weight>600.0</weight>
+                              <quantity>47</quantity>
+                              <temperature>Refrigerated</temperature>
+                              <photoURL>milk.png</photoURL>
+                            </data>
+                            <next>
+                              <data class="com.example.dsa_ca1.models.Product">
+                                <productName>Whole Milk</productName>
+                                <price>1.0</price>
+                                <weight>1.0</weight>
+                                <quantity>1</quantity>
+                                <temperature>Refrigerated</temperature>
+                                <photoURL>1</photoURL>
+                              </data>
+                            </next>
+                          </next>
+                        </head>
+                        <size>3</size>
+                      </products>
+                    </data>
+                  </head>
+                  <size>1</size>
+                </shelves>
+              </data>
+              <next>
+                <data class="com.example.dsa_ca1.models.Aisle">
+                  <aisleName>Cheese</aisleName>
+                  <aisleWidth>3.0</aisleWidth>
+                  <aisleHeight>3.0</aisleHeight>
+                  <aisleTemperature>Room</aisleTemperature>
+                  <shelves>
+                    <head>
+                      <data class="com.example.dsa_ca1.models.Shelf">
+                        <shelfNum>1</shelfNum>
+                        <products>
+                          <head>
+                            <data class="com.example.dsa_ca1.models.Product">
+                              <productName>Red Cheddar</productName>
+                              <price>4.0</price>
+                              <weight>400.0</weight>
+                              <quantity>21</quantity>
+                              <temperature>Room</temperature>
+                              <photoURL>cheddar.png</photoURL>
+                            </data>
+                          </head>
+                          <size>1</size>
+                        </products>
+                      </data>
+                      <next>
+                        <data class="com.example.dsa_ca1.models.Shelf">
+                          <shelfNum>2</shelfNum>
+                          <products>
+                            <head>
+                              <data class="com.example.dsa_ca1.models.Product">
+                                <productName>Mozarella</productName>
+                                <price>3.0</price>
+                                <weight>200.0</weight>
+                                <quantity>24</quantity>
+                                <temperature>Room</temperature>
+                                <photoURL>moz.png</photoURL>
+                              </data>
+                            </head>
+                            <size>1</size>
+                          </products>
+                        </data>
+                      </next>
+                    </head>
+                    <size>2</size>
+                  </shelves>
+                </data>
+              </next>
+            </head>
+            <size>2</size>
+          </aisles>
+        </data>
+        <next>
+          <data class="com.example.dsa_ca1.models.FloorArea">
+            <floorAreaName>Furniture</floorAreaName>
+            <floorLevel>Floor 3</floorLevel>
+            <aisles>
+              <head>
+                <data class="com.example.dsa_ca1.models.Aisle">
+                  <aisleName>Kitchen</aisleName>
+                  <aisleWidth>1.0</aisleWidth>
+                  <aisleHeight>1.0</aisleHeight>
+                  <aisleTemperature>Room</aisleTemperature>
+                  <shelves>
+                    <head>
+                      <data class="com.example.dsa_ca1.models.Shelf">
+                        <shelfNum>1</shelfNum>
+                        <products>
+                          <head>
+                            <data class="com.example.dsa_ca1.models.Product">
+                              <productName>Table</productName>
+                              <price>45.0</price>
+                              <weight>4000.0</weight>
+                              <quantity>6</quantity>
+                              <temperature>Room</temperature>
+                              <photoURL>table.png</photoURL>
+                            </data>
+                            <next>
+                              <data class="com.example.dsa_ca1.models.Product">
+                                <productName>Kitchen Table</productName>
+                                <price>1.0</price>
+                                <weight>1.0</weight>
+                                <quantity>1</quantity>
+                                <temperature>Room</temperature>
+                                <photoURL>1</photoURL>
+                              </data>
+                            </next>
+                          </head>
+                          <size>2</size>
+                        </products>
+                      </data>
+                    </head>
+                    <size>1</size>
+                  </shelves>
+                </data>
+              </head>
+              <size>1</size>
+            </aisles>
+          </data>
+          <next>
+            <data class="com.example.dsa_ca1.models.FloorArea">
+              <floorAreaName>Fruit and Veg</floorAreaName>
+              <floorLevel>Floor 1</floorLevel>
+              <aisles>
+                <head>
+                  <data class="com.example.dsa_ca1.models.Aisle">
+                    <aisleName>Fruit</aisleName>
+                    <aisleWidth>3.0</aisleWidth>
+                    <aisleHeight>2.0</aisleHeight>
+                    <aisleTemperature>Room</aisleTemperature>
+                    <shelves>
+                      <head>
+                        <data class="com.example.dsa_ca1.models.Shelf">
+                          <shelfNum>1</shelfNum>
+                          <products>
+                            <head>
+                              <data class="com.example.dsa_ca1.models.Product">
+                                <productName>Apples</productName>
+                                <price>2.0</price>
+                                <weight>100.0</weight>
+                                <quantity>80</quantity>
+                                <temperature>Room</temperature>
+                                <photoURL>apples.png</photoURL>
+                              </data>
+                            </head>
+                            <size>1</size>
+                          </products>
+                        </data>
+                        <next>
+                          <data class="com.example.dsa_ca1.models.Shelf">
+                            <shelfNum>2</shelfNum>
+                            <products>
+                              <head>
+                                <data class="com.example.dsa_ca1.models.Product">
+                                  <productName>Banana</productName>
+                                  <price>2.0</price>
+                                  <weight>400.0</weight>
+                                  <quantity>53</quantity>
+                                  <temperature>Room</temperature>
+                                  <photoURL>banana.png</photoURL>
+                                </data>
+                              </head>
+                              <size>1</size>
+                            </products>
+                          </data>
+                        </next>
+                      </head>
+                      <size>2</size>
+                    </shelves>
+                  </data>
+                  <next>
+                    <data class="com.example.dsa_ca1.models.Aisle">
+                      <aisleName>Veg</aisleName>
+                      <aisleWidth>3.0</aisleWidth>
+                      <aisleHeight>2.0</aisleHeight>
+                      <aisleTemperature>Room</aisleTemperature>
+                      <shelves>
+                        <head>
+                          <data class="com.example.dsa_ca1.models.Shelf">
+                            <shelfNum>1</shelfNum>
+                            <products>
+                              <head>
+                                <data class="com.example.dsa_ca1.models.Product">
+                                  <productName>Leek</productName>
+                                  <price>1.0</price>
+                                  <weight>200.0</weight>
+                                  <quantity>23</quantity>
+                                  <temperature>Room</temperature>
+                                  <photoURL>leek.png</photoURL>
+                                </data>
+                              </head>
+                              <size>1</size>
+                            </products>
+                          </data>
+                        </head>
+                        <size>1</size>
+                      </shelves>
+                    </data>
+                  </next>
+                </head>
+                <size>2</size>
+              </aisles>
+            </data>
+            <next>
+              <data class="com.example.dsa_ca1.models.FloorArea">
+                <floorAreaName>Household</floorAreaName>
+                <floorLevel>Floor 3</floorLevel>
+                <aisles>
+                  <head>
+                    <data class="com.example.dsa_ca1.models.Aisle">
+                      <aisleName>Cutlery</aisleName>
+                      <aisleWidth>2.0</aisleWidth>
+                      <aisleHeight>3.0</aisleHeight>
+                      <aisleTemperature>Room</aisleTemperature>
+                      <shelves>
+                        <head>
+                          <data class="com.example.dsa_ca1.models.Shelf">
+                            <shelfNum>1</shelfNum>
+                            <products>
+                              <size>0</size>
+                            </products>
+                          </data>
+                          <next>
+                            <data class="com.example.dsa_ca1.models.Shelf">
+                              <shelfNum>2</shelfNum>
+                              <products>
+                                <size>0</size>
+                              </products>
+                            </data>
+                          </next>
+                        </head>
+                        <size>2</size>
+                      </shelves>
+                    </data>
+                  </head>
+                  <size>1</size>
+                </aisles>
+              </data>
+              <next>
+                <data class="com.example.dsa_ca1.models.FloorArea">
+                  <floorAreaName>Cereal</floorAreaName>
+                  <floorLevel>Floor 1</floorLevel>
+                  <aisles>
+                    <head>
+                      <data class="com.example.dsa_ca1.models.Aisle">
+                        <aisleName>Sweet</aisleName>
+                        <aisleWidth>2.0</aisleWidth>
+                        <aisleHeight>2.0</aisleHeight>
+                        <aisleTemperature>Room</aisleTemperature>
+                        <shelves>
+                          <head>
+                            <data class="com.example.dsa_ca1.models.Shelf">
+                              <shelfNum>1</shelfNum>
+                              <products>
+                                <size>0</size>
+                              </products>
+                            </data>
+                          </head>
+                          <size>1</size>
+                        </shelves>
+                      </data>
+                    </head>
+                    <size>1</size>
+                  </aisles>
+                </data>
+              </next>
+            </next>
+          </next>
+        </next>
+      </head>
+      <size>5</size>
+    </floorAreas>
+    <numFloors>3</numFloors>
+  </com.example.dsa__ca1.models.Supermarket>
+</object-stream>
