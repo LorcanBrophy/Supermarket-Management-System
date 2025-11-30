@@ -11,7 +11,7 @@ class FloorAreaTest {
 
     @BeforeEach
     void setup() {
-        floorArea = new FloorArea("Fruit and Veg", "Ground Floor");
+        floorArea = new FloorArea("Fruit and Veg", "Floor 1");
         aisle1 = new Aisle("Apples", 6, 2, "Room");
         aisle2 = new Aisle("Bananas", 2, 2, "Room");
     }
@@ -19,8 +19,20 @@ class FloorAreaTest {
     @Test
     void testConstructor() {
         assertEquals("Fruit and Veg", floorArea.getFloorAreaName());
-        assertEquals("Ground Floor", floorArea.getFloorLevel());
+        assertEquals("Floor 1", floorArea.getFloorLevel());
         assertNotNull(floorArea.getAisles());
+    }
+
+    @Test
+    void testSetFloorAreaName() {
+        floorArea.setFloorAreaName("Dairy");
+        assertEquals("Dairy", floorArea.getFloorAreaName());
+    }
+
+    @Test
+    void testSetFloorAreaLevel() {
+        floorArea.setFloorLevel("Floor 2");
+        assertEquals("Floor 2", floorArea.getFloorLevel());
     }
 
     @Test
@@ -46,5 +58,24 @@ class FloorAreaTest {
 
         floorArea.removeAisle(aisle2);
         assertEquals(0, floorArea.getAisles().size());
+    }
+
+    @Test
+    void testTotalValue() {
+        floorArea.addAisle(aisle1);
+        floorArea.addAisle(aisle2);
+
+        float expected = aisle1.totalValue() + aisle2.totalValue();
+
+        assertEquals(expected, floorArea.totalValue());
+    }
+
+    @Test
+    void testToString() {
+        String s = floorArea.toString();
+
+        assertTrue(s.contains(floorArea.getFloorAreaName()));
+        assertTrue(s.contains(floorArea.getFloorLevel()));
+        assertTrue(s.contains("Total Aisles: " + floorArea.getAisles().size()));
     }
 }

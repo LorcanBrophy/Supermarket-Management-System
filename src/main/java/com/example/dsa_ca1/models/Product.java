@@ -13,10 +13,10 @@ public class Product {
     // constructor
     public Product(String productName, float price, float weight, int quantity, String temperature, String photoURL) {
         this.productName = productName;
-        this.price = price;
-        this.weight = weight;
-        this.quantity = quantity;
-        this.temperature = temperature;
+        setPrice(price);
+        setWeight(weight);
+        setQuantity(quantity);
+        setTemperature(temperature);
         this.photoURL = photoURL;
     }
 
@@ -24,25 +24,59 @@ public class Product {
     public String getProductName() { return productName; }
     public void setProductName(String productName) { this.productName = productName; }
 
-    public float getPrice() { return price; }
-    public void setPrice(float price) { this.price = price; }
+    public float getPrice() {
+        return price;
+    }
+    public void setPrice(float price) {
+        // keep price valid (no negatives)
+        if (price < 0) {
+            this.price = 1;
+            return;
+        }
+        this.price = price;
+    }
 
     public float getWeight() { return weight; }
-    public void setWeight(float weight) { this.weight = weight; }
+    public void setWeight(float weight) {
+        // keep weight valid (no negatives)
+        if (weight < 0) {
+            this.weight = 1;
+            return;
+        }
+        this.weight = weight;
+    }
 
     public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public void setQuantity(int quantity) {
+        // keep quantity valid (no negatives)
+        if (quantity < 0) {
+            this.quantity = 1;
+            return;
+        }
+        this.quantity = quantity;
+    }
 
     public String getTemperature() { return temperature; }
-    public void setTemperature(String temperature) { this.temperature = temperature; }
+    public void setTemperature(String temperature) {
+        // only allow preset temps
+        if (temperature.equals("Room") || temperature.equals("Refrigerated") || temperature.equals("Frozen")) {
+            this.temperature = temperature;
+        } else {
+            this.temperature = "Room";
+        }
+    }
 
     public String getPhotoURL() { return photoURL; }
     public void setPhotoURL(String photoURL) { this.photoURL = photoURL; }
 
     // helper methods
+
+    // increase or decrease quantity
     public void updateQuantity(int amount) {
         this.quantity += amount;
     }
+
+    // calculates totalValue of a product
     public float totalValue() {
         return price * quantity;
     }

@@ -5,7 +5,7 @@ public class FloorArea {
     private String floorAreaName;
     private String floorLevel;
 
-    private CustomLinkedList<Aisle> aisles = new CustomLinkedList<>();
+    private final CustomLinkedList<Aisle> aisles = new CustomLinkedList<>();
 
     // constructor
     public FloorArea(String floorAreaName, String floorLevel) {
@@ -31,18 +31,20 @@ public class FloorArea {
     public CustomLinkedList<Aisle> getAisles() {
         return aisles;
     }
-    public void setAisles(CustomLinkedList<Aisle> aisles) {
-        this.aisles = aisles;
-    }
 
     // methods
-    public void addAisle(Aisle a) {
-        aisles.add(a);
-    }
-    public void removeAisle(Aisle a) {
-        aisles.removeValue(a);
+
+    // adds an aisle to the floorArea
+    public void addAisle(Aisle aisle) {
+        aisles.linkedListAdd(aisle);
     }
 
+    // removes an aisle from the floorArea
+    public void removeAisle(Aisle aisle) {
+        aisles.linkedListRemove(aisle);
+    }
+
+    // calculates total value of floorArea
     public float totalValue() {
         float total = 0;
         for (Aisle aisle : aisles) {

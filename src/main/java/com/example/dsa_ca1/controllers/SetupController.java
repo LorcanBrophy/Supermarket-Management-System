@@ -55,11 +55,11 @@ public class SetupController {
             supermarket = new Supermarket(name, floors);
         }
 
-        // load the main supermarket ui
+        // load the supermarket ui
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/dsa_ca1/supermarket.fxml"));
         Parent newRoot = loader.load();
 
-        // loads main controller
+        // loads supermarketController
         SupermarketController controller = loader.getController();
         // passes the new supermarket object as argument
         controller.initialiseSupermarket(supermarket);

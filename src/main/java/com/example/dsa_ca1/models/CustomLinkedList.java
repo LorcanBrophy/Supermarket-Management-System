@@ -4,11 +4,10 @@ import java.util.Iterator;
 
 public class CustomLinkedList<T> implements Iterable<T> {
     private Node<T> head = null;
-    private Node<T> tail = null;
     private int size;
 
     // add elements to linked list
-    public void add(T data) {
+    public void linkedListAdd(T data) {
         Node<T> nn = new Node<>(data);
         if (head == null) {
             head = nn;
@@ -22,31 +21,8 @@ public class CustomLinkedList<T> implements Iterable<T> {
         size++;
     }
 
-    public void addHead(T data) {
-        Node<T> nn = new Node<>(data);
-        if (size == 0) {
-            head = tail = nn;
-        } else {
-            nn.setNext(head);
-            head = nn;
-        }
-        size++;
-    }
-
-    public void addTail(T data) {
-        Node<T> nn = new Node<>(data);
-        if (size == 0) {
-            head = tail = nn;
-        } else {
-            tail.setNext(nn);
-            tail = tail.getNext();
-        }
-        size++;
-    }
-
-
     // remove elements from linked list
-    public void removeValue(T data) {
+    public void linkedListRemove(T data) {
         if (head == null) return;
 
         if (head.getData().equals(data)) {
@@ -64,35 +40,6 @@ public class CustomLinkedList<T> implements Iterable<T> {
             }
             temp = temp.getNext();
         }
-        while (temp!=null) {
-            if (data.equals(temp.getData())) {
-                temp=temp.next;
-            }
-        }
-    }
-
-    public void removeHead() {
-        if (size == 0) return;
-
-        head = head.getNext();
-        size--;
-
-        if (size == 0) tail = null;
-    }
-
-    public void removeTail() {
-        if (size == 0) return;
-
-        if (size == 1) head = tail = null;
-        else {
-            Node<T> temp = head;
-            while (temp.getNext() != tail) {
-                temp = temp.getNext();
-            }
-            temp.setNext(null);
-            tail = temp;
-        }
-        size--;
     }
 
     // helper methods
@@ -102,7 +49,6 @@ public class CustomLinkedList<T> implements Iterable<T> {
 
     public void clear() {
         head = null;
-        tail = null;
         size = 0;
     }
 

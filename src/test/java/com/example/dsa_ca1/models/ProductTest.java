@@ -10,7 +10,7 @@ class ProductTest {
 
     @BeforeEach
     void setup() {
-        product = new Product("Cornflakes", 4, 720, 1, "room", "apple.png");
+        product = new Product("Cornflakes", 4, 720, 1, "Room", "apple.png");
     }
 
     @Test
@@ -19,7 +19,7 @@ class ProductTest {
         assertEquals(4, product.getPrice());
         assertEquals(720, product.getWeight());
         assertEquals(1, product.getQuantity());
-        assertEquals("room", product.getTemperature());
+        assertEquals("Room", product.getTemperature());
         assertEquals("apple.png", product.getPhotoURL());
 
         assertNotNull(product);
@@ -31,19 +31,57 @@ class ProductTest {
         product.setPrice(5);
         product.setWeight(850);
         product.setQuantity(2);
-        product.setTemperature("cold");
+        product.setTemperature("Room");
         product.setPhotoURL("frosties.png");
 
         assertEquals("Frosties", product.getProductName());
         assertEquals(5, product.getPrice());
         assertEquals(850, product.getWeight());
         assertEquals(2, product.getQuantity());
-        assertEquals("cold", product.getTemperature());
+        assertEquals("Room", product.getTemperature());
         assertEquals("frosties.png", product.getPhotoURL());
     }
 
     @Test
+    void testNegativeValues() {
+        product.setPrice(-50);
+        product.setWeight(-10);
+        product.setQuantity(-5);
+
+        assertEquals(1, product.getPrice());
+        assertEquals(1, product.getWeight());
+        assertEquals(1, product.getQuantity());
+    }
+
+    @Test
+    void testTemperatures() {
+        product.setTemperature("Frozen");
+        assertEquals("Frozen", product.getTemperature());
+
+        product.setTemperature("Refrigerated");
+        assertEquals("Refrigerated", product.getTemperature());
+
+        product.setTemperature("Room");
+        assertEquals("Room", product.getTemperature());
+    }
+
+    @Test
+    void testInvalidTemperature() {
+        product.setTemperature("SuperCold");
+        assertEquals("Room", product.getTemperature());
+
+        product.setTemperature("hot");
+        assertEquals("Room", product.getTemperature());
+
+        product.setTemperature("325");
+        assertEquals("Room", product.getTemperature());
+    }
+
+    @Test
     void testUpdateQuantity() {
+        product.updateQuantity(0);
+        assertEquals(1, product.getQuantity());
+
         product.updateQuantity(3);
         assertEquals(4, product.getQuantity());
 
@@ -64,11 +102,13 @@ class ProductTest {
 
     @Test
     void testToString() {
-        assertTrue(product.toString().contains("Cornflakes"));
-        assertFalse(product.toString().contains("Weetabix"));
+        String s = product.toString();
 
-        assertTrue(product.toString().contains("room"));
-        assertFalse(product.toString().contains("freezer"));
+        assertTrue(s.contains("Cornflakes"));
+        assertFalse(s.contains("Weetabix"));
+
+        assertTrue(s.contains("Room"));
+        assertFalse(s.contains("Freezer"));
     }
 
 }

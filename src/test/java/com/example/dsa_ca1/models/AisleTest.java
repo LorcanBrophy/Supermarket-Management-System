@@ -34,6 +34,54 @@ class AisleTest {
         
         assertNotNull(aisle.getShelves());
     }
+
+    @Test
+    void testAisleName() {
+        aisle.setAisleName("Dairy");
+        assertEquals("Dairy", aisle.getAisleName());
+    }
+
+    @Test
+    void testAisleWidth() {
+        aisle.setAisleWidth(-5);
+        assertEquals(1, aisle.getAisleWidth());
+
+        aisle.setAisleWidth(4.5f);
+        assertEquals(4.5f, aisle.getAisleWidth());
+    }
+
+    @Test
+    void testAisleHeight() {
+        aisle.setAisleHeight(-10);
+        assertEquals(1, aisle.getAisleHeight());
+
+        aisle.setAisleHeight(7.0f);
+        assertEquals(7.0f, aisle.getAisleHeight());
+    }
+
+    @Test
+    void testAisleTemperature() {
+        aisle.setAisleTemperature("Room");
+        assertEquals("Room", aisle.getAisleTemperature());
+
+        aisle.setAisleTemperature("Refrigerated");
+        assertEquals("Refrigerated", aisle.getAisleTemperature());
+
+        aisle.setAisleTemperature("Frozen");
+        assertEquals("Frozen", aisle.getAisleTemperature());
+    }
+
+    @Test
+    void testInvalidAisleTemperature() {
+        aisle.setAisleTemperature("SuperCold");
+        assertEquals("Room", aisle.getAisleTemperature());
+
+        aisle.setAisleTemperature("hot");
+        assertEquals("Room", aisle.getAisleTemperature());
+
+        aisle.setAisleTemperature("325");
+        assertEquals("Room", aisle.getAisleTemperature());
+    }
     
     @Test
     void testAddShelf() {
@@ -59,6 +107,36 @@ class AisleTest {
 
         aisle.removeShelf(shelf1);
         assertEquals("", aisle.getShelves().display());
+    }
+
+    @Test
+    void testTotalValue() {
+        aisle.addShelf(shelf1);
+        aisle.addShelf(shelf2);
+
+        float expected = shelf1.totalValue() + shelf2.totalValue();
+
+        assertEquals(expected, aisle.totalValue());
+    }
+
+    @Test
+    void testToString() {
+        String s = aisle.toString();
+
+        assertTrue(s.contains("Cereal"));
+        assertFalse(s.contains("Drinks"));
+
+        assertTrue(s.contains("W: 10"));
+        assertTrue(s.contains("H: 3"));
+
+        assertTrue(s.contains("Room"));
+        assertFalse(s.contains("Cold"));
+
+        assertTrue(s.contains("Total Shelves: 0"));
+
+        aisle.addShelf(new Shelf(1));
+        String updated = aisle.toString();
+        assertTrue(updated.contains("Total Shelves: 1"));
     }
 
 }

@@ -10,9 +10,10 @@ import java.io.ObjectOutputStream;
 
 public class Supermarket {
     // fields
-    private String name;
-    private CustomLinkedList<FloorArea> floorAreas = new CustomLinkedList<>();
-    private int numFloors;
+    private final String name;
+    private final int numFloors;
+
+    private final CustomLinkedList<FloorArea> floorAreas = new CustomLinkedList<>();
 
     // constructor
     public Supermarket(String name, int numFloors) {
@@ -20,36 +21,30 @@ public class Supermarket {
         this.numFloors = numFloors;
     }
 
-    // getters & setters
+    // getters
     public String getName() {
         return name;
     }
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public CustomLinkedList<FloorArea> getFloorAreas() {
         return floorAreas;
     }
-    public void setFloorAreas(CustomLinkedList<FloorArea> floorAreas) {
-        this.floorAreas = floorAreas;
-    }
-
     public int getNumFloors() {
         return numFloors;
     }
-    public void setNumFloors(int numFloors) {
-        this.numFloors = numFloors;
-    }
 
     // methods
+
+    // adds a floorArea to the supermarket
     public void addFloorArea(FloorArea floorArea) {
-        floorAreas.add(floorArea);
-    }
-    public void removeFloorArea(FloorArea floorArea) {
-        floorAreas.removeValue(floorArea);
+        floorAreas.linkedListAdd(floorArea);
     }
 
+    // deletes a floorArea from the supermarket
+    public void removeFloorArea(FloorArea floorArea) {
+        floorAreas.linkedListRemove(floorArea);
+    }
+
+    // calculates the total value of the supermarket
     public float totalValue() {
         float total = 0;
         for (FloorArea floorArea : floorAreas) {
@@ -65,6 +60,7 @@ public class Supermarket {
         out.writeObject(this);
         out.close();
     }
+
     public static Supermarket load(String fileName) throws Exception {
         Class<?>[] classes = new Class[] {
                 Supermarket.class,
@@ -74,7 +70,6 @@ public class Supermarket {
                 Product.class};
 
         XStream xstream = new XStream(new DomDriver());
-        XStream.setupDefaultSecurity(xstream);
         xstream.allowTypes(classes);
 
         ObjectInputStream is = xstream.createObjectInputStream(new FileReader(fileName + ".xml"));

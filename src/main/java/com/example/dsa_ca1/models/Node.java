@@ -1,7 +1,7 @@
 package com.example.dsa_ca1.models;
 
 public class Node<T> {
-    private T data;
+    private final T data;
     public Node<T> next;
 
     public Node(T data) {

@@ -1,10 +1,6 @@
 package com.example.dsa_ca1.controllers;
 
-import com.example.dsa_ca1.models.Supermarket;
-import com.example.dsa_ca1.models.FloorArea;
-import com.example.dsa_ca1.models.Aisle;
-import com.example.dsa_ca1.models.Shelf;
-import com.example.dsa_ca1.models.Product;
+import com.example.dsa_ca1.models.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,9 +9,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class SupermarketController {
@@ -272,7 +265,7 @@ public class SupermarketController {
         FloorArea newFloorArea = floorAreaDialog(null);
         if (newFloorArea == null) return;
 
-        supermarket.getFloorAreas().add(newFloorArea);
+        supermarket.getFloorAreas().linkedListAdd(newFloorArea);
         floorAreaListView.getItems().add(newFloorArea.getFloorAreaName());
 
         drawFloorAreasMap();
@@ -293,7 +286,7 @@ public class SupermarketController {
         selectedFloorArea = null;
 
         // remove from linked list and UI ListView
-        supermarket.getFloorAreas().removeValue(toRemove);
+        supermarket.getFloorAreas().linkedListRemove(toRemove);
         floorAreaListView.getItems().remove(selectedText);
 
         // wipe any aisles/shelves/products that were showing
@@ -456,8 +449,8 @@ public class SupermarketController {
         // clear reference
         selectedAisle = null;
 
-        // remove from the linked list + UI
-        selectedFloorArea.getAisles().removeValue(toRemove);
+        // remove from the linked list + ui
+        selectedFloorArea.getAisles().linkedListRemove(toRemove);
         aisleListView.getItems().remove(selectedText);
 
         // clear shelf and product table
@@ -520,8 +513,8 @@ public class SupermarketController {
         // clear any selected shelf
         selectedShelf = null;
 
-        // remove the shelf from the aisle and from the UI list
-        selectedAisle.getShelves().removeValue(toRemove);
+        // remove from the linked list + ui
+        selectedAisle.getShelves().linkedListRemove(toRemove);
         shelfListView.getItems().remove(selectedText);
 
         // clear the table since the shelf is gone
@@ -796,10 +789,10 @@ public class SupermarketController {
         String selectedFloor = floorSelectComboBox.getValue();
 
         // loops through floor areas and only displays those that are on correct floor
-        List<FloorArea> filteredFloorAreas = new ArrayList<>();
+        CustomLinkedList<FloorArea> filteredFloorAreas = new CustomLinkedList<>();
         for (FloorArea floorArea : supermarket.getFloorAreas()) {
             if (floorArea.getFloorLevel().equals(selectedFloor)) {
-                filteredFloorAreas.add(floorArea);
+                filteredFloorAreas.linkedListAdd(floorArea);
             }
         }
 
@@ -1188,10 +1181,10 @@ public class SupermarketController {
                     for (Product product : shelf.getProducts()) {
                         if (
                                 product.getProductName().equalsIgnoreCase(target.getProductName())
-                                && product.getWeight() == target.getWeight()
-                                && product.getPrice() == target.getPrice()
-                                && product.getTemperature().equalsIgnoreCase(target.getTemperature())
-                                && product.getPhotoURL().equalsIgnoreCase(target.getPhotoURL())
+                                        && product.getWeight() == target.getWeight()
+                                        && product.getPrice() == target.getPrice()
+                                        && product.getTemperature().equalsIgnoreCase(target.getTemperature())
+                                        && product.getPhotoURL().equalsIgnoreCase(target.getPhotoURL())
                         ) {
                             return product;
                         }
@@ -1231,7 +1224,7 @@ public class SupermarketController {
         // chooses the longer name
         // int maxLength = (tokensA.length > tokensB.length) ? tokensA.length : tokensB.length;
         int maxLength = Math.max(tokensA.length, tokensB.length);
-        return  (float) matches / maxLength;
+        return (float) matches / maxLength;
     }
 
     private double productSimilarityInAisle(Aisle aisle, Product newProd) {
