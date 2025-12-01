@@ -1,6 +1,7 @@
 <object-stream>
   <com.example.dsa__ca1.models.Supermarket>
     <name>Tesco</name>
+    <numFloors>3</numFloors>
     <floorAreas>
       <head>
         <data class="com.example.dsa_ca1.models.FloorArea">
@@ -171,7 +172,7 @@
                           <products>
                             <head>
                               <data class="com.example.dsa_ca1.models.Product">
-                                <productName>Apples</productName>
+                                <productName>Red Apples</productName>
                                 <price>2.0</price>
                                 <weight>100.0</weight>
                                 <quantity>80</quantity>
@@ -306,6 +307,5 @@
       </head>
       <size>5</size>
     </floorAreas>
-    <numFloors>3</numFloors>
   </com.example.dsa__ca1.models.Supermarket>
 </object-stream>

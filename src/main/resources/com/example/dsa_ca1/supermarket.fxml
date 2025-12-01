@@ -76,9 +76,9 @@
 
     <Tab text="Map" closable="false">
         <AnchorPane>
-            <ComboBox fx:id="floorSelectComboBox" layoutX="35" layoutY="20" prefWidth="150" promptText="Select Floor" />
+            <ComboBox fx:id="floorSelectComboBox" layoutX="35" layoutY="25" prefWidth="150" promptText="Select Floor" />
 
-            <Pane fx:id="floorMapPane" layoutY="45" prefWidth="900" prefHeight="530"/>
+            <Pane fx:id="floorMapPane" layoutY="35" prefWidth="900" prefHeight="530"/>
         </AnchorPane>
     </Tab>
 

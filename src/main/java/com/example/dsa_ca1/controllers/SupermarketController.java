@@ -555,7 +555,7 @@ public class SupermarketController {
         styleDialog(nameDialog);
 
         String name = nameDialog.showAndWait().orElse("").trim();
-        if (name.isEmpty()) return null; // if i didnt have .orElse() i would need to check (name == null)
+        if (name.isEmpty()) return null; // if I didn't have .orElse() i would need to check (name == null)
 
         // price
         TextInputDialog priceDialog = new TextInputDialog(prefillPrice);
@@ -850,7 +850,7 @@ public class SupermarketController {
     // draws aisles inside selected floorArea
     @FXML
     private void drawAisles(FloorArea floorArea, Rectangle floorAreaRect) {
-        // x and y coords for the floorArea rectangle
+        // x and y coordinates for the floorArea rectangle
         double xStart = floorAreaRect.getX();
         double yStart = floorAreaRect.getY();
 
@@ -908,7 +908,7 @@ public class SupermarketController {
     // draws shelves inside selected aisle
     @FXML
     private void drawShelves(Aisle aisle, Rectangle aisleRect) {
-        // x and y coords for the aisle rectangle
+        // x and y coordinates for the aisle rectangle
         double xStart = aisleRect.getX();
         double yStart = aisleRect.getY();
 
@@ -1071,7 +1071,7 @@ public class SupermarketController {
         styleDialog(nameDialog);
 
         String name = nameDialog.showAndWait().orElse("").trim();
-        if (name.isEmpty()) return; // if i didnt have .orElse() i would need to check (name == null)
+        if (name.isEmpty()) return; // if I didn't have .orElse() i would need to check (name == null)
 
         // price
         TextInputDialog priceDialog = new TextInputDialog();
@@ -1155,7 +1155,6 @@ public class SupermarketController {
 
     // logic for onSmartAdd()
     public void smartAdd(Product smartProd) {
-        // 2. find products in aisles with same temp, and similar words in title
 
         // 1. check if any identical product exists, if so add quantity
         Product match = findIdenticalProduct(smartProd);
@@ -1164,12 +1163,12 @@ public class SupermarketController {
             return;
         }
 
-        // 2.
+        // 2. find aisle/shelf with most similar name to smartAdd product
         Aisle aisle = findBestAisle(smartProd);
         Shelf shelf = findBestShelf(aisle, smartProd);
 
-        shelf.addProduct(smartProd);
-        productTable.getItems().add(smartProd);
+        shelf.addProduct(smartProd); // add object
+        productTable.getItems().add(smartProd); // add to ui
     }
 
     // helper methods for smartAdd
@@ -1200,8 +1199,12 @@ public class SupermarketController {
     private String[] tokenise(String name) {
         if (name == null) return new String[0];
 
+        // replace everything not a-z, 0-9, or space
+        // i.e. "Hello ____ WORLD!!!" => "hello world"
         name = name.toLowerCase().replaceAll("[^a-z0-9 ]", "");
 
+        // if one or more whitespace, make new work.
+        // i.e. "hello world" => ["hello", "world"]
         return name.split("\\s+");
     }
 
@@ -1212,6 +1215,7 @@ public class SupermarketController {
 
         if (tokensA.length == 0 || tokensB.length == 0) return 0;
 
+        // increments var everytime the same word appears
         int matches = 0;
         for (String tokenA : tokensA) {
             for (String tokenB : tokensB) {
@@ -1228,9 +1232,11 @@ public class SupermarketController {
         return (float) matches / maxLength;
     }
 
+    // see how similar one products name is to another in an aisle
     private double productSimilarityInAisle(Aisle aisle, Product newProd) {
         double best = 0;
 
+        // loops through aisle and compares existing product name vs new product
         for (Shelf shelf : aisle.getShelves()) {
             for (Product oldProd : shelf.getProducts()) {
                 double score = similarityScore(oldProd.getProductName(), newProd.getProductName());
@@ -1240,18 +1246,21 @@ public class SupermarketController {
         return best;
     }
 
+    // find the best aisle for smart add product based on name/temp
     private Aisle findBestAisle(Product newProd) {
         Aisle bestAisle = null;
         double highestScore;
         double threshold = 0.5;
 
+        // threshold lowers every iteration if similarity is not high enough
         while (threshold > 0) {
 
             highestScore = 0;
-
+            // loops through all floorAreas
             for (FloorArea floorArea : supermarket.getFloorAreas()) {
+                // loops through all aisles in floorArea
                 for (Aisle aisle : floorArea.getAisles()) {
-
+                    // if temp is not the same, skip
                     if (!aisle.getAisleTemperature().equals(newProd.getTemperature())) continue;
 
                     double score = similarityScore(aisle.getAisleName(), newProd.getProductName());
@@ -1263,10 +1272,9 @@ public class SupermarketController {
                 }
             }
 
-            if (bestAisle != null)
-                return bestAisle;
+            if (bestAisle != null) return bestAisle;
 
-            threshold -= 0.05;
+            threshold -= 0.05; // lowers threshold
         }
 
         // 2. IF NONE SIMILAR, CHECK PRODUCT VS PRODUCT NAME
@@ -1293,6 +1301,7 @@ public class SupermarketController {
         return bestAisle;
     }
 
+    // find the best shelf for smart add product
     private Shelf findBestShelf(Aisle bestAisle, Product newProd) {
         Shelf bestShelf = null;
         double highestScore = 0;
