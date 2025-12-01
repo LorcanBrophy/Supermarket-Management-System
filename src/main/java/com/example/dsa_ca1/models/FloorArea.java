@@ -17,6 +17,7 @@ public class FloorArea {
     public String getFloorAreaName() {
         return floorAreaName;
     }
+
     public void setFloorAreaName(String floorAreaName) {
         this.floorAreaName = floorAreaName;
     }
@@ -24,6 +25,7 @@ public class FloorArea {
     public String getFloorLevel() {
         return floorLevel;
     }
+
     public void setFloorLevel(String floorLevel) {
         this.floorLevel = floorLevel;
     }

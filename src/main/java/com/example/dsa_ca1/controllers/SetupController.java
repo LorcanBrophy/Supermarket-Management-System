@@ -12,9 +12,12 @@ import java.io.File;
 import java.io.IOException;
 
 public class SetupController {
-    @FXML public Spinner<Integer> numFloors;
-    @FXML private TextField supermarketName;
-    @FXML private Label welcomeText;
+    @FXML
+    public Spinner<Integer> numFloors;
+    @FXML
+    private TextField supermarketName;
+    @FXML
+    private Label welcomeText;
 
     @FXML
     public void initialize() {

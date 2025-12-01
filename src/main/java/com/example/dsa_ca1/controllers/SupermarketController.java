@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
+
 import java.util.Objects;
 
 public class SupermarketController {

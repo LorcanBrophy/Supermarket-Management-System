@@ -22,6 +22,7 @@ public class Aisle {
     public String getAisleName() {
         return aisleName;
     }
+
     public void setAisleName(String aisleName) {
         this.aisleName = aisleName;
     }
@@ -29,6 +30,7 @@ public class Aisle {
     public float getAisleWidth() {
         return aisleWidth;
     }
+
     public void setAisleWidth(float aisleWidth) {
         // keep width valid (no negatives)
         if (aisleWidth <= 0) {
@@ -41,6 +43,7 @@ public class Aisle {
     public float getAisleHeight() {
         return aisleHeight;
     }
+
     public void setAisleHeight(float aisleHeight) {
         // keep height valid (no negatives)
         if (aisleHeight <= 0) {
@@ -53,6 +56,7 @@ public class Aisle {
     public String getAisleTemperature() {
         return aisleTemperature;
     }
+
     public void setAisleTemperature(String aisleTemperature) {
         // only allow preset temps
         if (aisleTemperature.equals("Room") || aisleTemperature.equals("Refrigerated") || aisleTemperature.equals("Frozen")) {

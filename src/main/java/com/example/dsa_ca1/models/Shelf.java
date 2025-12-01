@@ -16,6 +16,7 @@ public class Shelf {
     public int getShelfNum() {
         return shelfNum;
     }
+
     public CustomLinkedList<Product> getProducts() {
         return products;
     }

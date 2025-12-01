@@ -21,12 +21,18 @@ public class Product {
     }
 
     // getters and setters
-    public String getProductName() { return productName; }
-    public void setProductName(String productName) { this.productName = productName; }
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
 
     public float getPrice() {
         return price;
     }
+
     public void setPrice(float price) {
         // keep price valid (no negatives)
         if (price < 0) {
@@ -36,7 +42,10 @@ public class Product {
         this.price = price;
     }
 
-    public float getWeight() { return weight; }
+    public float getWeight() {
+        return weight;
+    }
+
     public void setWeight(float weight) {
         // keep weight valid (no negatives)
         if (weight < 0) {
@@ -46,7 +55,10 @@ public class Product {
         this.weight = weight;
     }
 
-    public int getQuantity() { return quantity; }
+    public int getQuantity() {
+        return quantity;
+    }
+
     public void setQuantity(int quantity) {
         // keep quantity valid (no negatives)
         if (quantity < 0) {
@@ -56,7 +68,10 @@ public class Product {
         this.quantity = quantity;
     }
 
-    public String getTemperature() { return temperature; }
+    public String getTemperature() {
+        return temperature;
+    }
+
     public void setTemperature(String temperature) {
         // only allow preset temps
         if (temperature.equals("Room") || temperature.equals("Refrigerated") || temperature.equals("Frozen")) {
@@ -66,8 +81,13 @@ public class Product {
         }
     }
 
-    public String getPhotoURL() { return photoURL; }
-    public void setPhotoURL(String photoURL) { this.photoURL = photoURL; }
+    public String getPhotoURL() {
+        return photoURL;
+    }
+
+    public void setPhotoURL(String photoURL) {
+        this.photoURL = photoURL;
+    }
 
     // helper methods
 

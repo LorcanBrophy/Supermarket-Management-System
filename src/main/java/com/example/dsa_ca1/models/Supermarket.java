@@ -25,9 +25,11 @@ public class Supermarket {
     public String getName() {
         return name;
     }
+
     public CustomLinkedList<FloorArea> getFloorAreas() {
         return floorAreas;
     }
+
     public int getNumFloors() {
         return numFloors;
     }
@@ -62,7 +64,7 @@ public class Supermarket {
     }
 
     public static Supermarket load(String fileName) throws Exception {
-        Class<?>[] classes = new Class[] {
+        Class<?>[] classes = new Class[]{
                 Supermarket.class,
                 FloorArea.class,
                 Aisle.class,
@@ -81,7 +83,7 @@ public class Supermarket {
     @Override
     public String toString() {
         return "Supermarket: " + name +
-                " | " + numFloors +  " Floors | Total Floor Areas: " + floorAreas.size();
+                " | " + numFloors + " Floors | Total Floor Areas: " + floorAreas.size();
     }
 
 }
