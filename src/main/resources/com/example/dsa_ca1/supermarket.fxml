@@ -7,7 +7,6 @@
     <Tab text="Browser" closable="false">
         <BorderPane>
             <center>
-                <TextField promptText="Search for product"/>
                 <HBox spacing="10" style="-fx-padding: 10;">
                     <VBox spacing="5">
                         <Label text="Floor Areas"/>
