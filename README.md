@@ -63,8 +63,6 @@ Implementation details can be found in the controller logic.
   - Shelves within aisles
 - The map updates dynamically when layout changes are made.
 
-![Map](readme-assets/gui-map.png)
-
 ## How to Run
 
 1. Clone the repository:
@@ -81,9 +79,14 @@ Implementation details can be found in the controller logic.
 
 ## Screenshots
 
-
+### Startup Screen
 ![Startup Screen](readme-assets/login-ui.png)
 
+### Main Menu
+![Main Menu](readme-assets/main-menu.png)
+
+### Floor Map Visualization
+![Map](readme-assets/gui-map.png)
 
 ---
 
