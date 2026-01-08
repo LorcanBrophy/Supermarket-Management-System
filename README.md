@@ -25,15 +25,24 @@ A key constraint of the project is that **all hierarchical data is stored using 
 - XML-based persistence for saving and loading supermarket data
 - Visual floor map per floor
 - Custom linked list implementation
+- Smart product placement algorithm
+- Partial and keyword-based product search
+- View all products with aggregated values per aisle and floor area
+- Reset functionality to restore the supermarket to its initial state
 
----
+### Smart Add Algorithm
+The system includes a smart add feature that automatically places products in the most appropriate location within the supermarket.
 
-## Technologies Used
+The algorithm:
+- Detects identical products and merges quantities instead of duplicating entries
+- Uses token-based partial string matching to compare product names
+- Prioritizes aisles with matching temperature requirements (Room, Refrigerated, Frozen)
+- Scores similarity between product names, aisle names, and existing products
+- Dynamically selects or creates the most suitable shelf
 
-- **Java**
-- **JavaFX** (GUI)
-- **CSS** (UI styling)
-- **XML** (Data persistence)
+This allows products to be added efficiently without requiring manual placement.
+
+Implementation details can be found in the controller logic.
 
 ---
 
@@ -54,6 +63,8 @@ A key constraint of the project is that **all hierarchical data is stored using 
   - Shelves within aisles
 - The map updates dynamically when layout changes are made.
 
+![Map](readme-assets/gui-map.png)
+
 ## How to Run
 
 1. Clone the repository:
@@ -66,4 +77,19 @@ A key constraint of the project is that **all hierarchical data is stored using 
 
 4. Run the main application class
 
+--
+
 ## Screenshots
+
+
+![Startup Screen](readme-assets/login-ui.png)
+
+
+---
+
+## Technologies Used
+
+- **Java**
+- **JavaFX** (GUI)
+- **CSS** (UI styling)
+- **XML** (Data persistence)
